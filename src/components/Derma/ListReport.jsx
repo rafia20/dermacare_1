@@ -63,7 +63,7 @@ const ListReport = () => {
       </View>
 
       {/* Feedback Modal */}
-      <FeedbackModal visible={feedbackModalVisible} onClose={() => setFeedbackModalVisible(false)} />
+      <FeedbackModal  visible={feedbackModalVisible} onClose={() => setFeedbackModalVisible(false)} />
 
       {/* View Details Modal */}
       <ViewDetailsModal visible={detailsModalVisible} onClose={() => setDetailsModalVisible(false)} />

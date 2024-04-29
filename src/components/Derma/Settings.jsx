@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import { Avatar, List, Button, Divider } from "react-native-paper";
+import { auth } from "../../Connection/DB";
 
 
 const Settings = () => {
@@ -14,7 +15,16 @@ const navigation = useNavigation()
 
   const handleLogout = () => {
     console.log("Logout action triggered");
-    navigation.navigate('Login')
+    auth.signOut()
+    .then(() => {
+      console.log('User signed out!');
+      navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+    })
+    .catch(error => {
+      console.error(error);
+    });
+    
+    
     // Implement your logout logic here
   };
 

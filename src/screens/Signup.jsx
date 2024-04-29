@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
 import tw from 'twrnc';
-
+import { auth, provider } from '../Connection/DB';
 
 const Signup = () => {
 const navigation = useNavigation()
@@ -10,7 +10,22 @@ const navigation = useNavigation()
   const [password, setPassword] = useState('');
 
   const handleSignup = () => {
-   
+    auth.createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        console.log('User account created & signed in!');
+        navigation.navigate('Home')
+      })
+      .catch(error => {
+        if (error.code === 'auth/email-already-in-use') {
+          console.log('That email address is already in use!');
+        }
+
+        if (error.code === 'auth/invalid-email') {
+          console.log('That email address is invalid!');
+        }
+
+        console.error(error);
+      });
   };
 
   return (

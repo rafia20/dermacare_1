@@ -2,7 +2,8 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
 import tw from 'twrnc';
-
+import { auth } from '../Connection/DB';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 const Login = () => {
   const [isDermaLogin, setIsDermaLogin] = useState(true);
   const [email, setEmail] = useState('');
@@ -11,8 +12,30 @@ const Login = () => {
 
   const handleLogin = () => {
     if (isDermaLogin) {
-      // Handle login for Derma
-      navigation.navigate('Derma')
+      signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        console.log('User signed in!');
+        navigation.navigate('Derma')
+      })
+      .catch(error => {
+        if (error.code === 'auth/email-already-in-use') {
+          console.log('That email address is already in use!');
+        }
+        else if (error.code === 'auth/invalid-email') {
+          console.log('That email address is invalid!');
+        }
+        else if (error.code === 'auth/user-not-found') {
+          console.log('User not found');
+        }
+        else if (error.code === 'auth/wrong-password') {
+          console.log('Wrong password');
+        }
+        else {
+          console.error(error);
+        }
+      });
+
+      
     } else {
       // Handle login for Client
     }

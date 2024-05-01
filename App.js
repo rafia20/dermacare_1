@@ -9,6 +9,7 @@ import ListReport from './src/components/Derma/ListReport';
 import LocationData from './src/screens/LocationData';
 import AddProfile from './src/screens/AddProfile';
 import PatientBottomMenu from './src/components/PatientBottomMenu';
+import ReportList from './src/components/Patient/ReportList';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +34,7 @@ const App = () => {
 
         <Stack.Screen name="listreport" component={ListReport} />
         <Stack.Screen name="locationData" component={LocationData} />
+        <Stack.Screen name="AllReports" component={ReportList} />
       </Stack.Navigator>
     </NavigationContainer>
   );

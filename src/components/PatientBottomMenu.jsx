@@ -7,6 +7,7 @@ import Booking from './Derma/Booking';
 import Settings from './Derma/Settings';
 import Header from './Header';
 import ReportPosting from './Patient/ReportPosting';
+import ReportList from './Patient/ReportList';
 
 const Tab = createBottomTabNavigator();
 
@@ -38,7 +39,7 @@ const PatientBottomMenu = () => {
       })}
     >
       <Tab.Screen options={{ headerShown: false }} name="Home" component={ReportPosting} />
-      <Tab.Screen options={{ headerShown: false }} name="Maps" component={Maps} />
+      <Tab.Screen options={{ headerShown: false }} name="AllReports" component={ReportList} />
       <Tab.Screen options={{ headerShown: false }} name="Bookings" component={Booking} />
       <Tab.Screen options={{ headerShown: false }} name="Settings" component={Settings} />
     </Tab.Navigator>

@@ -5,13 +5,17 @@ import { ref as dbRef, set } from 'firebase/database';
 import { ref as storageRef, uploadString, getDownloadURL, uploadBytes } from 'firebase/storage';
 import { auth, db, storage } from '../../Connection/DB';
 import { onAuthStateChanged } from 'firebase/auth';
+import Loading from '../Loading';
+import { useNavigation } from '@react-navigation/native';
+
 
 
 const ReportPosting = () => {
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
     const [uid, setUid] = useState(''); // Add this line
-
+    const [loading , setLoading] = useState(false);
+    const navigation = useNavigation();
     useEffect(() => {
         auth.onAuthStateChanged((user) => {
             console.log(user)
@@ -47,10 +51,11 @@ const ReportPosting = () => {
         console.log(uid);
         if (uid && image) {
             const curren = Date.now();
-            const path = `images/${uid}/${curren}`;
+            const path = `images/${uid}/reports/${curren}/`;
             const imageStorageRef = storageRef(storage, path);
             console.log(imageStorageRef);
             try {
+                setLoading(true)
                 const response = await fetch(image);
 
 
@@ -61,7 +66,7 @@ const ReportPosting = () => {
                 console.log("Image uploaded successfully!");
                 getDownloadURL(imageStorageRef).then((url) => {
                     console.log(url);
-                    set(dbRef(db, `/patients/${uid}/${curren}`), {
+                    set(dbRef(db, `/patients/${uid}/reports/${curren}`), {
                         user: uid,
                         image: url,
                         status: "pending",
@@ -69,11 +74,13 @@ const ReportPosting = () => {
                     })
                         .then(() => {
                             console.log("Successfully updated");
-
+                            setLoading(false)
+                            navigation.navigate('AllReports');
                         }
                         )
                         .catch((error) => {
                             console.log(error);
+                            setLoading(false)
                         });
                 }
                 );
@@ -92,6 +99,8 @@ const ReportPosting = () => {
 
     return (
         <View style={styles.container}>
+            {loading? <Loading/> : null}
+         
             <Text style={styles.title}>Report Posting</Text>
             <TextInput
                 style={styles.input}

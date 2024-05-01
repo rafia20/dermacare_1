@@ -7,6 +7,7 @@ import Login from './src/screens/Login';
 import Signup from './src/screens/Signup';
 import ListReport from './src/components/Derma/ListReport';
 import LocationData from './src/screens/LocationData';
+import AddProfile from './src/screens/AddProfile';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,7 +22,9 @@ const App = () => {
         }}
       >
         <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="AddProfile" component={AddProfile} />
         <Stack.Screen name="Signup" component={Signup} />
+        
         <Stack.Screen name="Derma" component={BottomNavDerma} />
         <Stack.Screen name="Onboarding" component={Onboarding} />
 

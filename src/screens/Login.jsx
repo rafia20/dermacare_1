@@ -45,7 +45,15 @@ const Login = () => {
 
 
     } else {
-      // Handle login for Client
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+
+          console.log('Patient login');
+          AsyncStorage.setItem('userType', 'patient');
+          AsyncStorage.setItem('email', email);
+          AsyncStorage.setItem("uid", auth.currentUser.uid);
+          navigation.navigate('Patient');
+        });
     }
   };
 
@@ -83,7 +91,7 @@ const Login = () => {
         {/* ... rest of your login form */}
 
         {isDermaLogin && (
-          <View style={{width: '100%', marginBottom:20}}>
+          <View style={{ width: '100%', marginBottom: 20 }}>
             <TextInput
               value={mtn}
               onChangeText={setMtn}
@@ -101,7 +109,7 @@ const Login = () => {
           </View>
         )}
 
-        {(mtn === "derm123" || mtn === "DERM123") && (
+        {(mtn === "derm123" || mtn === "DERM123") || (!isDermaLogin) && (
           <>
             <TextInput
 

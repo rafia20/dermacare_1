@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
 import tw from 'twrnc';
 import { auth, provider } from '../Connection/DB';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const Signup = () => {
 const navigation = useNavigation()
@@ -10,10 +11,11 @@ const navigation = useNavigation()
   const [password, setPassword] = useState('');
 
   const handleSignup = () => {
-    auth.createUserWithEmailAndPassword(email, password)
+    
+    createUserWithEmailAndPassword(auth, email, password)
       .then(() => {
         console.log('User account created & signed in!');
-        navigation.navigate('Home')
+        navigation.navigate('AddProfile');
       })
       .catch(error => {
         if (error.code === 'auth/email-already-in-use') {

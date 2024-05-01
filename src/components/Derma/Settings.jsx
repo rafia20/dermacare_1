@@ -3,6 +3,7 @@ import React from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import { Avatar, List, Button, Divider } from "react-native-paper";
 import { auth } from "../../Connection/DB";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const Settings = () => {
@@ -17,6 +18,9 @@ const navigation = useNavigation()
     console.log("Logout action triggered");
     auth.signOut()
     .then(() => {
+      AsyncStorage.removeItem('userType');
+      AsyncStorage.removeItem('email');
+      AsyncStorage.removeItem('uid');
       console.log('User signed out!');
       navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
     })

@@ -20,10 +20,11 @@ const App = () => {
           animationTypeForReplace: 'pop',
         }}
       >
-        <Stack.Screen name="Derma" component={BottomNavDerma} />
-        <Stack.Screen name="Onboarding" component={Onboarding} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Signup} />
+        <Stack.Screen name="Derma" component={BottomNavDerma} />
+        <Stack.Screen name="Onboarding" component={Onboarding} />
+
         <Stack.Screen name="listreport" component={ListReport} />
         <Stack.Screen name="locationData" component={LocationData} />
       </Stack.Navigator>

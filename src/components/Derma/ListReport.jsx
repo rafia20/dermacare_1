@@ -1,14 +1,45 @@
-import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, StyleSheet,Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, ScrollView, TouchableOpacity, StyleSheet, Text, RefreshControl } from 'react-native';
 import { Card, Button } from 'react-native-paper';
 import GeneralHeader from '../GeneralHeader';
-
 import FeedbackModal from '../FeedbackModal';
 import ViewDetailsModal from '../ViewDetailsModal';
+import { get, ref, set } from 'firebase/database';
+import { db } from '../../Connection/DB';  // Make sure you import your database instance correctl
 
 const ListReport = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
+
+  useEffect(() => {
+    fetchReports();
+  }, []);
+
+  const fetchReports = () => {
+    setRefreshing(true); // Start refreshing
+    get(ref(db, 'reports')).then((snapshot) => {
+      if (snapshot.exists()) {
+        console.log(snapshot.val());
+        // Here you might want to set this data to your component state
+      } else {
+        console.log('No data available');
+      }
+    }).catch((error) => {
+      console.error(error);
+    }).finally(() => {
+      setRefreshing(false); // End refreshing
+    });
+  };
+
+  const onRefresh = () => {
+    console.log("Refreshing...");
+    fetchReports(); // Call fetch reports which handles setting refreshing
+  };
+
+
+
+
 
   const reports = [
     { id: 1, title: 'Report 1', description: 'This is the first report.', status: 'Approved' },
@@ -25,6 +56,7 @@ const ListReport = () => {
     console.log(`View details for ${reportTitle}`);
     setDetailsModalVisible(true);
   };
+
   const getStatusColor = (status) => {
     return status === 'Approved' ? '#28A745' : '#DC3545';
   };
@@ -33,7 +65,15 @@ const ListReport = () => {
     <>
       <GeneralHeader title={'Reports'} />
       <View style={styles.container}>
-        <ScrollView style={styles.scrollView}>
+        <ScrollView
+          style={styles.scrollView}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+        >
           {reports.map(report => (
             <Card key={report.id} style={styles.card}>
               <Card.Title title={report.title} />
@@ -63,7 +103,7 @@ const ListReport = () => {
       </View>
 
       {/* Feedback Modal */}
-      <FeedbackModal  visible={feedbackModalVisible} onClose={() => setFeedbackModalVisible(false)} />
+      <FeedbackModal visible={feedbackModalVisible} onClose={() => setFeedbackModalVisible(false)} />
 
       {/* View Details Modal */}
       <ViewDetailsModal visible={detailsModalVisible} onClose={() => setDetailsModalVisible(false)} />

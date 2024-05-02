@@ -10,6 +10,7 @@ import LocationData from './src/screens/LocationData';
 import AddProfile from './src/screens/AddProfile';
 import PatientBottomMenu from './src/components/PatientBottomMenu';
 import ReportList from './src/components/Patient/ReportList';
+import Home from './src/components/Derma/Home';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,7 @@ const App = () => {
           animationTypeForReplace: 'pop',
         }}
       >
+        <Stack.Screen name='Home' component={Home} />
         <Stack.Screen name="Patient" component={PatientBottomMenu} />
 
         <Stack.Screen name="Login" component={Login} />

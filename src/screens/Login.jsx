@@ -109,7 +109,7 @@ const Login = () => {
           </View>
         )}
 
-        {(mtn === "derm123" || mtn === "DERM123") || (!isDermaLogin) && (
+        {(mtn === "derm123" || mtn === "DERM123") && (isDermaLogin) && (
           <>
             <TextInput
 
@@ -130,7 +130,45 @@ const Login = () => {
               style={tw`bg-white w-full mb-4 p-3 rounded-lg border border-gray-300`}
             />
           </>
+
+
+
+
+
+
         )}
+
+
+        {(!isDermaLogin) && (
+          <>
+            <TextInput
+
+              value={email}
+              onChangeText={setEmail}
+              placeholder="Email"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              style={tw`bg-white w-full mb-4 p-3 rounded-lg border border-gray-300`}
+            />
+
+            <TextInput
+              value={password}
+              onChangeText={setPassword}
+              placeholder="Password"
+              secureTextEntry={true}
+              autoCapitalize="none"
+              style={tw`bg-white w-full mb-4 p-3 rounded-lg border border-gray-300`}
+            />
+          </>
+
+
+
+
+
+
+        )}
+
+
 
         <TouchableOpacity className='self-end' onPress={() => { }}>
           <Text style={tw`text-blue-600 mb-8 text-right`}>Forgot password?</Text>

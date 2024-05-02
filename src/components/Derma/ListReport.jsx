@@ -6,21 +6,38 @@ import FeedbackModal from '../FeedbackModal';
 import ViewDetailsModal from '../ViewDetailsModal';
 import { get, ref, set } from 'firebase/database';
 import { db } from '../../Connection/DB';  // Make sure you import your database instance correctl
+import { Image } from 'react-native';
 
-const ListReport = () => {
+
+const ListReport = ({ route, navigation }) => {
+  const { uid } = route.params;
+  console.log(uid);
+
   const [refreshing, setRefreshing] = useState(false);
   const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
-
+  const [patientReports, setPatientReports] = useState([]);
+  const [patientId, setPatientId] = useState(uid);
   useEffect(() => {
     fetchReports();
   }, []);
 
   const fetchReports = () => {
     setRefreshing(true); // Start refreshing
-    get(ref(db, 'reports')).then((snapshot) => {
+    get(ref(db, 'patients')).then((snapshot) => {
       if (snapshot.exists()) {
-        console.log(snapshot.val());
+        console.log(patientId)
+        const reports = [];
+        const snap = snapshot.val();
+        console.log(snap[patientId])
+        if (snap[patientId].reports) {
+          for (const key in snap[patientId].reports) {
+            reports.push({ id: key, ...snap[patientId].reports[key] });
+          }
+        }
+        console.log(reports);
+        setPatientReports(reports);
+
         // Here you might want to set this data to your component state
       } else {
         console.log('No data available');
@@ -36,10 +53,6 @@ const ListReport = () => {
     console.log("Refreshing...");
     fetchReports(); // Call fetch reports which handles setting refreshing
   };
-
-
-
-
 
   const reports = [
     { id: 1, title: 'Report 1', description: 'This is the first report.', status: 'Approved' },
@@ -74,14 +87,23 @@ const ListReport = () => {
             />
           }
         >
-          {reports.map(report => (
+ 
+
+ 
+
+          {patientReports.map(report => (
             <Card key={report.id} style={styles.card}>
-              <Card.Title title={report.title} />
+              <Card.Title title={report.id} />
               <Card.Content>
-                <Text style={styles.descriptionText}>{report.description}</Text>
-                <Text style={[styles.statusText, { color: getStatusColor(report.status) }]}>
-                  Status: {report.status}
-                </Text>
+                <View style={{ flexDirection: 'row' }}>
+                  <Image source={{ uri: report.image }} style={{ width: 50, height: 50, marginRight: 10 }} />
+                  <View>
+                    <Text style={styles.descriptionText}>{report.description}</Text>
+                    <Text style={[styles.statusText, { color: getStatusColor(report.status) }]}>
+                      Status: {report.status}
+                    </Text>
+                  </View>
+                </View>
               </Card.Content>
               <Card.Actions style={styles.actions}>
                 <TouchableOpacity

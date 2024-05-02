@@ -32,7 +32,7 @@ const Home = () => {
                         profile['id'] = data[i];
 
                         console.log(profile);
-                        patientsData.push(snapshot.val()[data[i]].profile);
+                        patientsData.push(profile);
                     }
                 }
                 setFilteredPatients(patientsData);

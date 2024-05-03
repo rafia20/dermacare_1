@@ -11,6 +11,7 @@ import AddProfile from './src/screens/AddProfile';
 import PatientBottomMenu from './src/components/PatientBottomMenu';
 import ReportList from './src/components/Patient/ReportList';
 import Home from './src/components/Derma/Home';
+import Chat from './src/screens/Chat';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +26,7 @@ const App = () => {
         }}
       >
         <Stack.Screen name='Home' component={Home} />
+        <Stack.Screen name='Chat' component={Chat} />
         <Stack.Screen name="Patient" component={PatientBottomMenu} />
 
         <Stack.Screen name="Login" component={Login} />

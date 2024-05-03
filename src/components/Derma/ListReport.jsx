@@ -118,6 +118,14 @@ const ListReport = ({ route, navigation }) => {
                 >
                   <Button textColor="#FFFFFF">View Details</Button>
                 </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: 'green' }]}
+                  onPress={() => navigation.navigate('Chat', { reportId: report.id , patientId: patientId})}
+                >
+                  <Button textColor="#FFFFFF">Chat</Button>
+                </TouchableOpacity>
+      
               </Card.Actions>
             </Card>
           ))}
@@ -129,6 +137,7 @@ const ListReport = ({ route, navigation }) => {
 
       {/* View Details Modal */}
       <ViewDetailsModal visible={detailsModalVisible} onClose={() => setDetailsModalVisible(false)} />
+      
     </>
   );
 };

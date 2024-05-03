@@ -25,7 +25,7 @@ const App = () => {
           animationTypeForReplace: 'pop',
         }}
       >
-        <Stack.Screen name='Home' component={Home} />
+        <Stack.Screen name='ReportList' component={ReportList} />
         <Stack.Screen name='Chat' component={Chat} />
         <Stack.Screen name="Patient" component={PatientBottomMenu} />
 

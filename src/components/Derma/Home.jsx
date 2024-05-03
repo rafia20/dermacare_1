@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, FlatList, Platform, RefreshControl } from 'react-native';
+import { SafeAreaView, FlatList, Platform, RefreshControl, View } from 'react-native';
 import PatientReportCard from '../PatientReportCard';
 import SearchBar from '../SearchBar';
 import { get, ref } from 'firebase/database';
@@ -67,16 +67,18 @@ const Home = () => {
         } 
     };
 
-    const renderPatient = ({ item }) => <PatientReportCard patient={item} />;
+    const renderPatient = ({ item }) =>
+
+     <PatientReportCard style={{borderColor: 'red', borderWidth: 2}} patient={item} />;
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: 'gray' }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff5f5' }}>
             <SearchBar onSearch={handleSearch} />
             <FlatList
                 data={filteredPatients}
                 renderItem={renderPatient}
                 keyExtractor={item => item.id}
-                contentContainerStyle={{ padding: 16, paddingTop: Platform.OS === 'android' ? 25 : 0 }}
+                contentContainerStyle={{ padding: 0, paddingTop: Platform.OS === 'android' ? 0 : 0}}
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}

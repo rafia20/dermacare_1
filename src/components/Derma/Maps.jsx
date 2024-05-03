@@ -25,7 +25,7 @@ const Maps = () => {
   const handleButtonPress = () => {
     
     console.log('Overlay button pressed');
-    navigation.navigate('locationData')
+    navigation.navigate('locationData', {location: location.coords})
     
   };
 

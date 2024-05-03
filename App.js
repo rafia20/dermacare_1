@@ -12,9 +12,11 @@ import PatientBottomMenu from './src/components/PatientBottomMenu';
 import ReportList from './src/components/Patient/ReportList';
 import Home from './src/components/Derma/Home';
 import Chat from './src/screens/Chat';
+import RAGChat from './src/screens/RAGChat';
+import { polyfill as polyfillFetch } from 'react-native-polyfill-globals/src/fetch';
 
 const Stack = createNativeStackNavigator();
-
+polyfillFetch();
 const App = () => {
   return (
     <NavigationContainer>
@@ -25,15 +27,17 @@ const App = () => {
           animationTypeForReplace: 'pop',
         }}
       >
-        <Stack.Screen name='ReportList' component={ReportList} />
+        <Stack.Screen name='Chat with AI' component={RAGChat} />
+        <Stack.Screen name="Derma" component={BottomNavDerma} />
+        {/* <Stack.Screen name="Patient" component={PatientBottomMenu} /> */}
+        <Stack.Screen name='Home' component={Home} />
         <Stack.Screen name='Chat' component={Chat} />
-        <Stack.Screen name="Patient" component={PatientBottomMenu} />
+        
 
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="AddProfile" component={AddProfile} />
         <Stack.Screen name="Signup" component={Signup} />
         
-        <Stack.Screen name="Derma" component={BottomNavDerma} />
         <Stack.Screen name="Onboarding" component={Onboarding} />
 
         <Stack.Screen name="listreport" component={ListReport} />

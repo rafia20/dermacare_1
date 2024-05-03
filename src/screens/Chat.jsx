@@ -25,7 +25,7 @@ const Chat = ({ route }) => {
                 ...value,
                 timestamp: new Date(key).toLocaleString(),
             }));
-            setMessages(parsedMessages);
+            setMessages(parsedMessages.sort().reverse());
         });
 
         // return () => remove(messagesRef);
@@ -38,7 +38,7 @@ const Chat = ({ route }) => {
             message: newMessage,
             userId: patientId,
             role: await AsyncStorage.getItem("role") || "derm",
-        }).then(() => console.log('Message sent!'))
+        }).then(() => {console.log('Message sent!');})
             .catch((error) => console.error(error))
             .finally(() => setNewMessage(''));
         setNewMessage('');
@@ -66,6 +66,9 @@ const Chat = ({ route }) => {
                     data={messages}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => renderMessage(item)}
+                    contentContainerStyle={tw`flex-grow`}
+                    showsVerticalScrollIndicator={false}
+                    inverted
                 />
                 <View style={tw`flex-row items-center p-2`}>
                     <TextInput

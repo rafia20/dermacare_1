@@ -37,18 +37,5 @@ const styles = StyleSheet.create({
         
         backgroundColor: '#fff',
     },
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 20,
-        paddingHorizontal: 10,
-    },
-    responseContainer: {
-        flex: 1,
-        marginTop: 20,
-    },
-    responseText: {
-        fontSize: 16,
-    }
+    
 });

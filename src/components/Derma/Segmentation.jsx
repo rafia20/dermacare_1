@@ -85,8 +85,8 @@ const Segmentation = ({ route, navigation }) => {
               onPress={uploadImage}
               color="#4CAF50"
             />
-            {returnedImageUrl && (
-              <TouchableOpacity style={styles.nextButton} onPress={() => navigation.navigate('NextStep')}>
+            {/*returnedImageUrl */ true && (
+              <TouchableOpacity style={styles.nextButton} onPress={() => navigation.navigate('Classify', { 'image': imageUrl })}>
                 <Text style={styles.nextButtonText}>Proceed to Next Step</Text>
               </TouchableOpacity>
             )}

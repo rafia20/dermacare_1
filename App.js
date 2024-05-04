@@ -13,10 +13,11 @@ import ReportList from './src/components/Patient/ReportList';
 import Home from './src/components/Derma/Home';
 import Chat from './src/screens/Chat';
 import RAGChat from './src/screens/RAGChat';
-import { polyfill as polyfillFetch } from 'react-native-polyfill-globals/src/fetch';
+// import { polyfill as polyfillFetch } from 'react-native-polyfill-globals/src/fetch';
+import Segmentation from './src/components/Derma/Segmentation';
 
 const Stack = createNativeStackNavigator();
-polyfillFetch();
+
 const App = () => {
   return (
     <NavigationContainer>
@@ -27,9 +28,12 @@ const App = () => {
           animationTypeForReplace: 'pop',
         }}
       >
-        <Stack.Screen name='Chat with AI' component={RAGChat} />
+        
+        
         <Stack.Screen name="Derma" component={BottomNavDerma} />
+        <Stack.Screen name='Segmentation' component={Segmentation} />
         {/* <Stack.Screen name="Patient" component={PatientBottomMenu} /> */}
+        <Stack.Screen name='Chat with AI' component={RAGChat} />
         <Stack.Screen name='Home' component={Home} />
         <Stack.Screen name='Chat' component={Chat} />
         

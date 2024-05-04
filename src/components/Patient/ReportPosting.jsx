@@ -38,11 +38,14 @@ const ReportPosting = () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-
+            "mediaTypes": "Images",
+            "presentationStyle": "overFullScreen",
+            
             quality: 1,
         });
 
         if (!result.canceled) {
+            result.assets[0].mimeType = "image/jpeg";
             setImage(result.assets[0].uri);
         }
     };

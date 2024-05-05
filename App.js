@@ -32,6 +32,7 @@ const App = () => {
       >
         
         
+        <Stack.Screen name="Onboarding" component={Onboarding} />
         <Stack.Screen name="Derma" component={BottomNavDerma} />
         <Stack.Screen name='Segmentation' component={Segmentation} />
         <Stack.Screen name='Classify' component={Classification} />
@@ -46,7 +47,6 @@ const App = () => {
         <Stack.Screen name="AddProfile" component={AddProfile} />
         <Stack.Screen name="Signup" component={Signup} />
         
-        <Stack.Screen name="Onboarding" component={Onboarding} />
 
         <Stack.Screen name="listreport" component={ListReport} />
         <Stack.Screen name="locationData" component={LocationData} />

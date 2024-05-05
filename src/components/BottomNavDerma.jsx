@@ -6,6 +6,7 @@ import Maps from './Derma/Maps';
 import Booking from './Derma/Booking';
 import Settings from './Derma/Settings';
 import Header from './Header';
+import RAGChat from '../screens/RAGChat';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,8 +24,8 @@ const BottomNavDerma = () => {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Maps') {
             iconName = focused ? 'map' : 'map-outline';
-          } else if (route.name === 'Bookings') {
-            iconName = focused ? 'calendar' : 'calendar-outline';
+          } else if (route.name === 'AI Chat') {
+            iconName = focused ? 'chat' : 'chat-outline';
           } else if (route.name === 'Settings') {
             iconName = focused ? 'cog' : 'cog-outline'; // Assuming 'cog' is the icon for settings
           }
@@ -38,7 +39,7 @@ const BottomNavDerma = () => {
     >
       <Tab.Screen options={{ headerShown: false }} name="Home" component={Home} />
       <Tab.Screen options={{ headerShown: false }} name="Maps" component={Maps} />
-      <Tab.Screen options={{ headerShown: false }} name="Bookings" component={Booking} />
+      <Tab.Screen options={{ headerShown: false }} name="AI Chat" component={RAGChat} />
       <Tab.Screen options={{ headerShown: false }} name="Settings" component={Settings} />
     </Tab.Navigator>
     </>

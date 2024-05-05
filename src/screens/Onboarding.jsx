@@ -2,8 +2,11 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import React from 'react';
 import LottieView from 'lottie-react-native';
 import tw from 'twrnc'; // Ensure twrnc is correctly configured
+import { useNavigation } from '@react-navigation/native';
+
 
 const Onboarding = () => {
+  const navigation = useNavigation();
   return (
     <View style={tw`flex-1 justify-center items-center bg-gray-100 px-4`}>
       {/* Animation container with increased size for visual impact */}
@@ -31,7 +34,9 @@ const Onboarding = () => {
         style={tw`bg-blue-500 hover:bg-blue-700 mt-5 rounded-lg w-full py-3 shadow-lg`}
         activeOpacity={0.8}
       >
-        <Text style={tw`text-white text-center font-semibold text-lg`}>
+        <Text onPress={()=>{
+          navigation.navigate('Login')
+        }} style={tw`text-white text-center font-semibold text-lg`}>
           Get Started
         </Text>
       </TouchableOpacity>

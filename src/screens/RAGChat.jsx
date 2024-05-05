@@ -11,7 +11,7 @@ export default function RAGChat() {
 
     return (
         <>
-            <GeneralHeader title={" "} />
+          
             <View style={styles.container}>
 
 

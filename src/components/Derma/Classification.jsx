@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView,ActivityIndicator } from 'react-native';
 import GeneralHeader from '../GeneralHeader';
 import PieComponent from '../PieChart';
 import LottieView from 'lottie-react-native';
@@ -48,6 +48,7 @@ export default function Classification({ route }) {
     const [highest, setHighest] = useState();
     const [recommendations, setRecommendations] = useState();
     const [flag, setFlag] = useState(false);
+    const [recommenderLoading , setRecommenderLoading] = useState(false);
     console.log(route.params);
 
     const GOOGLE_API_KEY = 'AIzaSyAmf5o7tzb0Nq9K9eS3m2HXX7nSrBZokwg'; // Replace with your 
@@ -56,13 +57,19 @@ export default function Classification({ route }) {
 
     async function streamGeminiContent(prompt, content) {
         console.log(prompt + content);
-
-        const result = await model.generateContent(prompt + " " + content);
-        const response = await result.response;
-        const text = await response.text();
-        console.log(text)
-        setContentCards(parseContent(text));
-        setRecommendations(text);
+        try {
+            setRecommenderLoading(true);
+            const result = await model.generateContent(prompt + " " + content);
+            const response =  result.response;
+            const text =  response.text();
+            console.log(text)
+            setContentCards(parseContent(text));
+            setRecommendations(text);
+            setRecommenderLoading(false);
+        } catch (error) {
+            console.error(error);
+        }
+    
 
 
     }
@@ -178,6 +185,7 @@ export default function Classification({ route }) {
 
             </View>
             <ScrollView>
+                {contentCards?.length === 0 && recommenderLoading && <ActivityIndicator size="large" color="#0000ff" />}
                 {contentCards?.map((card, index) => (
                     <Card key={index} style={{ margin: 10 }}>
                         
@@ -192,7 +200,7 @@ export default function Classification({ route }) {
             
             </ScrollView>
             {flag && <Text>{recommendations}</Text>}
-            <TouchableOpacity onPress={() => setFlag(!flag)}><Text style={{ textAlign: 'center', color: 'blue', fontSize: 18, marginTop: 10 }}>Parse Text</Text></TouchableOpacity> 
+            <TouchableOpacity onPress={() => setFlag(!flag)}><Text style={{ textAlign: 'center', color: 'gray', fontSize: 10, marginTop: 10 }}>Parse Text</Text></TouchableOpacity> 
         </ScrollView>
     );
 }

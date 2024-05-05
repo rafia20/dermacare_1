@@ -10,6 +10,38 @@ const LocationData = ({ route }) => {
   const [visible, setVisible] = useState(false);
   const [modalContent, setModalContent] = useState('');
 
+  function formatTimestamp(timestamp) {
+    // Create a Date object from the timestamp
+    var date = new Date(timestamp);
+
+    // Get minutes to determine if rounding up or down
+    var minutes = date.getMinutes();
+
+    // Round the hour
+    if (minutes >= 30) {
+      date.setHours(date.getHours() + 1); // Increment hour if minutes are 30 or more
+    }
+
+    // Zero out the minutes and seconds for clean rounding
+    date.setMinutes(0, 0, 0);
+
+    // Define options for displaying the date
+    var options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    };
+
+    // Format the date with the specified options
+    var readableDate = date.toLocaleString('en-US', options);
+
+    return readableDate;
+  }
+
   useEffect(() => {
     const fetchUVData = async () => {
       const myHeaders = new Headers();
@@ -17,17 +49,17 @@ const LocationData = ({ route }) => {
       myHeaders.append("Content-Type", "application/json");
 
       const requestOptions = {
-          method: 'GET',
-          headers: myHeaders,
-          redirect: 'follow'
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
       };
 
       try {
-          const response = await fetch(`https://api.openuv.io/api/v1/forecast?lat=${latitude}&lng=${longitude}&alt=100`, requestOptions);
-          const result = await response.json();
-          setUVData(result.result);
+        const response = await fetch(`https://api.openuv.io/api/v1/forecast?lat=${latitude}&lng=${longitude}&alt=100`, requestOptions);
+        const result = await response.json();
+        setUVData(result.result);
       } catch (error) {
-          console.error('Error fetching UV data:', error);
+        console.error('Error fetching UV data:', error);
       }
     };
 
@@ -58,7 +90,7 @@ const LocationData = ({ route }) => {
       return '#ccffcc'; // Green alert for low UV index
     }
   };
-  
+
 
   const getPrecautionaryAdvice = (uvIndex) => {
     if (uvIndex > 8) {
@@ -76,12 +108,12 @@ const LocationData = ({ route }) => {
       <ScrollView style={styles.container}>
         {uvData.map((item, index) => (
           <TouchableOpacity key={index} onPress={() => showModal(getPrecautionaryAdvice(item.uv))}>
-            <Card style={[styles.card, {backgroundColor: getAlertColor(item.uv)}]}>
+            <Card style={[styles.card, { backgroundColor: getAlertColor(item.uv) }]}>
               <Card.Content>
                 <Title>UV Level: {item.uv.toFixed(2)}</Title>
                 <View style={styles.iconAndText}>
                   <MaterialCommunityIcons name={getUVIcon(item.uv)} size={30} color="#517fa4" />
-                  <Paragraph style={styles.paragraph}>UV Level: {item.uv.toFixed(2)}</Paragraph>
+                  <Paragraph style={styles.paragraph}>Time: {formatTimestamp(item.uv_time)}</Paragraph>
                 </View>
                 <Paragraph>Sun Altitude: {item.sun_position.altitude.toFixed(2)}°</Paragraph>
                 <Paragraph>Sun Azimuth: {item.sun_position.azimuth.toFixed(2)}°</Paragraph>

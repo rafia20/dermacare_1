@@ -4,6 +4,7 @@ import { PieChart } from 'react-native-gifted-charts';
 import PropTypes from 'prop-types';
 
 const PieComponent = ({ pieData }) => {
+    console.log(pieData)
   if (!pieData || !Array.isArray(pieData) || pieData.length === 0) {
     return (
       <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
@@ -28,7 +29,7 @@ const PieComponent = ({ pieData }) => {
     <View style={{ flexDirection: 'column', alignItems: 'center' }}>
       {pieData.map((section, index) => (
         <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-          {renderDot(section.gradientCenterColor)}
+          {renderDot(section.color)}
           <Text style={{ color: 'white' }}>{`${section.label}: ${section.value}%`}</Text>
         </View>
       ))}
@@ -44,6 +45,7 @@ const PieComponent = ({ pieData }) => {
             data={pieData}
             donut
             showGradient
+            
             sectionAutoFocus
             radius={90}
             innerRadius={60}

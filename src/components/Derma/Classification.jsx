@@ -32,14 +32,18 @@ export default function Classification({ route }) {
         
     }
     function generateRandomColor() {
-        return '#' + Math.floor(Math.random() * 16777215).toString(16);
+        const randomColor = Math.floor(Math.random() * 16777215).toString(16); // Generate random hex number
+        return '#' + randomColor.padStart(6, '0'); // Pad with leading zeros if necessary
     }
+    
 
     function mergeAndSortData(samplePieData, additionalData) {
         const convertedData = additionalData.map(item => {
             const label = Object.keys(item)[0];
             const value = item[label];
+            console.log(value);
             return {
+                
                 value: parseFloat(value.toFixed(2)),
                 label: label,
                 color: generateRandomColor(),

@@ -86,7 +86,7 @@ const Segmentation = ({ route, navigation }) => {
               color="#4CAF50"
             />
             {/*returnedImageUrl */ true && (
-              <TouchableOpacity style={styles.nextButton} onPress={() => navigation.navigate('Classify', { 'image': imageUrl, 'segmented': returnedImageUrl, "paientId": patientId , 'reportId': reportId})}>
+              <TouchableOpacity style={styles.nextButton} onPress={() => navigation.navigate('Classify', { 'image': imageUrl, 'segmented': returnedImageUrl, "patientId": patientId , 'reportId': reportId})}>
                 <Text style={styles.nextButtonText}>Proceed to Next Step</Text>
               </TouchableOpacity>
             )}

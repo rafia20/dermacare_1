@@ -16,6 +16,7 @@ import RAGChat from './src/screens/RAGChat';
 // import { polyfill as polyfillFetch } from 'react-native-polyfill-globals/src/fetch';
 import Segmentation from './src/components/Derma/Segmentation';
 import Classification from './src/components/Derma/Classification';
+import Feedback from './src/screens/Feedback';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +35,7 @@ const App = () => {
         <Stack.Screen name="Derma" component={BottomNavDerma} />
         <Stack.Screen name='Segmentation' component={Segmentation} />
         <Stack.Screen name='Classify' component={Classification} />
+        <Stack.Screen name="Feedback" component={Feedback} />
         {/* <Stack.Screen name="Patient" component={PatientBottomMenu} /> */}
         <Stack.Screen name='Chat with AI' component={RAGChat} />
         <Stack.Screen name='Home' component={Home} />

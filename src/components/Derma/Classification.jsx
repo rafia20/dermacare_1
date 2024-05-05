@@ -4,9 +4,13 @@ import GeneralHeader from '../GeneralHeader';
 import PieComponent from '../PieChart';
 import LottieView from 'lottie-react-native';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { Button } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 
 export default function Classification({ route }) {
+    const navigation = useNavigation();
+    
     const genAI = new GoogleGenerativeAI("AIzaSyAmf5o7tzb0Nq9K9eS3m2HXX7nSrBZokwg");
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
     const { image, segmented, patientId, reportId } = route.params;
@@ -80,10 +84,12 @@ export default function Classification({ route }) {
                 });
 
                 if (!response.ok) throw new Error('Network response was not ok.' + response);
+                console.log(response)
                 let content = await response.json();
+                
                 setData(mergeAndSortData([], content));
             } catch (error) {
-                // console.error('There was an error!', error);
+                console.error('There was an error!', error.message);
                 // Simulated fallback data in case of an error
                 setData(mergeAndSortData([], [{ 'acne': 12.918820977210999 }, { 'dermatomyositis': 82.23594522476196 }, { 'pediculosis lids': 5.845235288143158 }]));
             } finally {
@@ -115,6 +121,9 @@ export default function Classification({ route }) {
 
             <TouchableOpacity onPress={async () => await streamGeminiContent("Suggest medications, treatments, lifestyle modifications for a patient who has", highest)}><Text>Generate Recommendations</Text></TouchableOpacity>
             <Text>{recommendations}</Text>
+            
+            <Button mode="contained" onPress={() => navigation.navigate('Feedback', { patientId: patientId, reportId: reportId, image: image, segmented: segmented, recommendation: recommendations })}>
+                Feedback</Button>
         </ScrollView>
     );
 }

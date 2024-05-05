@@ -108,7 +108,7 @@ const ListReport = ({ route, navigation }) => {
               <Card.Actions style={styles.actions}>
                 <TouchableOpacity
                   style={[styles.button, { backgroundColor: '#007BFF' }]}
-                  onPress={() => navigation.navigate('Segmentation', { reportId: report.id, imageUrl: report.image })}
+                  onPress={() => navigation.navigate('Segmentation', { reportId: report.id, imageUrl: report.image, patientId: patientId, reportId: report.id })}
                 >
                   <Button textColor="#FFFFFF">Process Report</Button>
                 </TouchableOpacity>

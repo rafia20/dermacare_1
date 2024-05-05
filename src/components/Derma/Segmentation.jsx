@@ -7,7 +7,7 @@ import * as FileSystem from 'expo-file-system';
 import GeneralHeader from '../GeneralHeader';
 
 const Segmentation = ({ route, navigation }) => {
-  const { imageUrl } = route.params;
+  const { imageUrl, patientId, reportId } = route.params;
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [returnedImageUrl, setReturnedImageUrl] = useState(null);
@@ -86,7 +86,7 @@ const Segmentation = ({ route, navigation }) => {
               color="#4CAF50"
             />
             {/*returnedImageUrl */ true && (
-              <TouchableOpacity style={styles.nextButton} onPress={() => navigation.navigate('Classify', { 'image': imageUrl })}>
+              <TouchableOpacity style={styles.nextButton} onPress={() => navigation.navigate('Classify', { 'image': imageUrl, 'segmented': returnedImageUrl, "paientId": patientId , 'reportId': reportId})}>
                 <Text style={styles.nextButtonText}>Proceed to Next Step</Text>
               </TouchableOpacity>
             )}

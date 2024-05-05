@@ -1,13 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import GeneralHeader from '../GeneralHeader';
 import PieComponent from '../PieChart';
 import LottieView from 'lottie-react-native';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
 
 export default function Classification({ route }) {
+    const genAI = new GoogleGenerativeAI("AIzaSyAmf5o7tzb0Nq9K9eS3m2HXX7nSrBZokwg");
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const { image, segmented, patientId, reportId } = route.params;
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [highest, setHighest] = useState();
+    const [recommendations, setRecommendations] = useState();
+    console.log(route.params);
 
+    const GOOGLE_API_KEY = 'AIzaSyAmf5o7tzb0Nq9K9eS3m2HXX7nSrBZokwg'; // Replace with your 
+    const apiKey = `${GOOGLE_API_KEY}`; // Replace with your actual API key
+    
+
+    async function streamGeminiContent(prompt, content) {
+       console.log(prompt + content);
+
+        const result = await model.generateContent(prompt + " " + content );
+        const response = await result.response;
+        const text = await response.text();
+        console.log(text)
+        setRecommendations(text);
+
+        
+    }
     function generateRandomColor() {
         return '#' + Math.floor(Math.random() * 16777215).toString(16);
     }
@@ -27,6 +50,8 @@ export default function Classification({ route }) {
         const combinedData = [...samplePieData, ...convertedData];
         combinedData.sort((a, b) => b.value - a.value);
         combinedData[0].focused = true; // Focus on the highest value
+        setHighest(combinedData[0].label);
+        console.log(highest)
         return combinedData;
     }
 
@@ -54,9 +79,9 @@ export default function Classification({ route }) {
                 let content = await response.json();
                 setData(mergeAndSortData([], content));
             } catch (error) {
-                console.error('There was an error!', error);
+                // console.error('There was an error!', error);
                 // Simulated fallback data in case of an error
-                setData(mergeAndSortData([], [{'acne': 12.918820977210999}, {'dermatomyositis': 81.23594522476196}, {'pediculosis lids': 5.845235288143158}]));
+                setData(mergeAndSortData([], [{ 'acne': 12.918820977210999 }, { 'dermatomyositis': 82.23594522476196 }, { 'pediculosis lids': 5.845235288143158 }]));
             } finally {
                 setLoading(false);
             }
@@ -66,30 +91,33 @@ export default function Classification({ route }) {
     }, [route.params.image]);
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <GeneralHeader title="Classification" />
             {loading ? (
                 <View style={styles.splashScreen}>
                     <LottieView
-                        style={{width: 200, height: 200}}
+                        style={{ width: 200, height: 200 }}
 
                         source={require('../../../assets/loadingAnim.json')} // Ensure the path to your Lottie file is correct
                         autoPlay
                         loop={true}
-                        
+
                     />
                     <Text style={styles.loadingText}>Analyzing Image...</Text>
                 </View>
             ) : (
                 <PieComponent pieData={data} />
             )}
-        </View>
+
+            <TouchableOpacity onPress={async () => await streamGeminiContent("Suggest medications, treatments, lifestyle modifications for a patient who has", highest)}><Text>Generate Recommendations</Text></TouchableOpacity>
+            <Text>{recommendations}</Text>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        
+
     },
     splashScreen: {
         flex: 1,

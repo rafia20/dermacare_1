@@ -6,11 +6,40 @@ import LottieView from 'lottie-react-native';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { Card } from 'react-native-paper';
 
 
 export default function Classification({ route }) {
+    const [contentCards, setContentCards] = useState([]);
+    function parseContent(apiResponse) {
+  const cards = [];
+  const splitSections = apiResponse.split('**').filter(text => text.trim() !== '');
+
+  for (let i = 0; i < splitSections.length; i += 2) {
+    const title = splitSections[i].trim();
+    const content = splitSections[i + 1] ? splitSections[i + 1].split('\n').map(line => line.trim()).filter(line => line !== '') : [];
+
+    // Handle bulleted items
+    const formattedContent = content.map(line => {
+      if (line.startsWith('*')) {
+        return line.substring(1).trim();  // Remove the bullet point
+      }
+      return line;
+    });
+    console.log(formattedContent)
+    cards.push({
+      title,
+      content: formattedContent
+    });
+  }
+
+  return cards;
+}
+
+      
+
     const navigation = useNavigation();
-    
+
     const genAI = new GoogleGenerativeAI("AIzaSyAmf5o7tzb0Nq9K9eS3m2HXX7nSrBZokwg");
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
     const { image, segmented, patientId, reportId } = route.params;
@@ -18,28 +47,30 @@ export default function Classification({ route }) {
     const [loading, setLoading] = useState(true);
     const [highest, setHighest] = useState();
     const [recommendations, setRecommendations] = useState();
+    const [flag, setFlag] = useState(false);
     console.log(route.params);
 
     const GOOGLE_API_KEY = 'AIzaSyAmf5o7tzb0Nq9K9eS3m2HXX7nSrBZokwg'; // Replace with your 
     const apiKey = `${GOOGLE_API_KEY}`; // Replace with your actual API key
-    
+
 
     async function streamGeminiContent(prompt, content) {
-       console.log(prompt + content);
+        console.log(prompt + content);
 
-        const result = await model.generateContent(prompt + " " + content );
+        const result = await model.generateContent(prompt + " " + content);
         const response = await result.response;
         const text = await response.text();
         console.log(text)
+        setContentCards(parseContent(text));
         setRecommendations(text);
 
-        
+
     }
     function generateRandomColor() {
         const randomColor = Math.floor(Math.random() * 16777215).toString(16); // Generate random hex number
         return '#' + randomColor.padStart(6, '0'); // Pad with leading zeros if necessary
     }
-    
+
 
     function mergeAndSortData(samplePieData, additionalData) {
         const convertedData = additionalData.map(item => {
@@ -47,7 +78,7 @@ export default function Classification({ route }) {
             const value = item[label];
             console.log(value);
             return {
-                
+
                 value: parseFloat(value.toFixed(2)),
                 label: label,
                 color: generateRandomColor(),
@@ -86,7 +117,7 @@ export default function Classification({ route }) {
                 if (!response.ok) throw new Error('Network response was not ok.' + response);
                 console.log(response)
                 let content = await response.json();
-                
+
                 setData(mergeAndSortData([], content));
             } catch (error) {
                 console.error('There was an error!', error.message);
@@ -119,11 +150,49 @@ export default function Classification({ route }) {
                 <PieComponent pieData={data} />
             )}
 
-            <TouchableOpacity onPress={async () => await streamGeminiContent("Suggest medications, treatments, lifestyle modifications for a patient who has", highest)}><Text>Generate Recommendations</Text></TouchableOpacity>
-            <Text>{recommendations}</Text>
+            <View style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                margin: 10,
+                padding: 10,
+                backgroundColor: 'white',
+                borderRadius: 10,
+                elevation: 5,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+            }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold' }}> {highest}</Text>
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
+                <Button icon='magic-staff' mode="elevated" onPress={async () => await streamGeminiContent("Suggest medications, treatments, lifestyle modifications for a patient who has", highest)}>
+                    Recommendation
+                </Button>
+
+                <Button icon={'grease-pencil'} mode="elevated" onPress={() => navigation.navigate('Feedback', { patientId: patientId, reportId: reportId, image: image, segmented: segmented, recommendation: recommendations })}>
+                    Feedback
+                </Button>
+
+
+            </View>
+            <ScrollView>
+                {contentCards?.map((card, index) => (
+                    <Card key={index} style={{ margin: 10 }}>
+                        
+                        {console.log(card.content[0] ==="")}
+                         {card.content[0] === ""?  <Card.Title titleStyle={styles.cardTitle} title={card.title} /> : <Card.Title title={card.title} />}
+                        <Card.Content>
+                            {card.content === ""? '' : <Text>{card.content}</Text>}
+                        </Card.Content>
+                    </Card>
+                ))}
+
             
-            <Button mode="contained" onPress={() => navigation.navigate('Feedback', { patientId: patientId, reportId: reportId, image: image, segmented: segmented, recommendation: recommendations })}>
-                Feedback</Button>
+            </ScrollView>
+            {flag && <Text>{recommendations}</Text>}
+            <TouchableOpacity onPress={() => setFlag(!flag)}><Text style={{ textAlign: 'center', color: 'blue', fontSize: 18, marginTop: 10 }}>Parse Text</Text></TouchableOpacity> 
         </ScrollView>
     );
 }
@@ -142,4 +211,30 @@ const styles = StyleSheet.create({
         marginTop: 20,
         fontSize: 18,
     },
+    card: {
+        margin: 10,
+        padding: 5,
+        backgroundColor: 'white',
+        borderRadius: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+      },
+      cardItem: {
+        fontSize: 16,
+        marginBottom: 5,
+      },
+      cardTitle: {
+        fontSize: 20,  // Larger font size
+        fontWeight: 'bold',  // Bold text
+        color: '#007bff',  // A vibrant color, adjust as needed
+        alignSelf: 'center',  // Center the title
+        alignItems: 'center',  // Center the title
+        justifyContent: 'center',  // Center the title
+        paddingTop:40
+        
+      },
+
 });

@@ -18,6 +18,7 @@ import Segmentation from './src/components/Derma/Segmentation';
 import Classification from './src/components/Derma/Classification';
 import Feedback from './src/screens/Feedback';
 import NewsScreen from './src/screens/NewsScreen';
+import ReportPosting from './src/components/Patient/ReportPosting';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +33,7 @@ const App = () => {
         }}
       >
         
+        <Stack.Screen name="ReportPosting" component={ReportPosting} />
         <Stack.Screen name="News" component={NewsScreen} />
         <Stack.Screen name="Onboarding" component={Onboarding} />
         <Stack.Screen name="Derma" component={BottomNavDerma} />

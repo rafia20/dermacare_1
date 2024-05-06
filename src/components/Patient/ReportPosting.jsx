@@ -7,6 +7,8 @@ import { auth, db, storage } from '../../Connection/DB';
 import { onAuthStateChanged } from 'firebase/auth';
 import Loading from '../Loading';
 import { useNavigation } from '@react-navigation/native';
+import { Button, FAB, Modal, Portal, Provider } from 'react-native-paper';
+import GeneralHeader from '../GeneralHeader';
 
 
 
@@ -14,7 +16,7 @@ const ReportPosting = () => {
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
     const [uid, setUid] = useState(''); // Add this line
-    const [loading , setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
     useEffect(() => {
         auth.onAuthStateChanged((user) => {
@@ -28,6 +30,31 @@ const ReportPosting = () => {
         });
     }, []);
 
+    const [modalVisible, setModalVisible] = useState(false);
+    const handleCaptureImage = async () => {
+        const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+        console.log('Camera permission:', permissionResult);
+
+        if (permissionResult.granted === false) {
+            Alert.alert('Permission required', 'Permission to access camera is required!', [{ text: 'OK' }]);
+            return;
+        }
+
+        const pickerResult = await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 1,
+        });
+
+        console.log('Image picker result:', pickerResult.assets[0].uri);
+        setImage(pickerResult.assets[0].uri);
+        if (!pickerResult.canceled) {
+            setSelectedImage(pickerResult.assets[0].uri);
+            setModalVisible(false); // Close the modal after capturing an image
+        }
+    };
+
+
     const handleChoosePhoto = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
@@ -40,7 +67,7 @@ const ReportPosting = () => {
             allowsEditing: true,
             "mediaTypes": "Images",
             "presentationStyle": "overFullScreen",
-            
+
             quality: 1,
         });
 
@@ -101,10 +128,13 @@ const ReportPosting = () => {
     }
 
     return (
+        <>
+        <GeneralHeader title="Report Posting" />
         <View style={styles.container}>
-            {loading? <Loading/> : null}
-         
-            <Text style={styles.title}>Report Posting</Text>
+            
+            <Provider>
+            {loading ? <Loading /> : null}
+
             <TextInput
                 style={styles.input}
                 placeholder="Enter description"
@@ -113,19 +143,36 @@ const ReportPosting = () => {
                 onChangeText={setDescription}
                 value={description}
             />
-            <TouchableOpacity style={styles.button} onPress={handleChoosePhoto}>
-                <Text style={styles.buttonText}>Choose Photo</Text>
-            </TouchableOpacity>
+
+            <View style={{ 'flexDirection': 'row', 'justifyContent': 'space-between'}}>
+            <Button icon={'image'} mode='elevated'  onPress={handleChoosePhoto}>
+                Choose Photo
+            </Button>
+            
+            <Button icon={'camera'} mode='elevated'  onPress={handleCaptureImage}>
+                Take Photo
+            </Button>
+            
+
+            </View>
+            <Text/>
+
+           
             {image && (
                 <Image
                     source={{ uri: image }}
                     style={styles.preview}
                 />
             )}
-            <TouchableOpacity style={styles.button} onPress={handleSendData}>
-                <Text style={styles.buttonText}>Submit Report</Text>
-            </TouchableOpacity>
+
+          
+            <Button icon={'send'} mode='contained'  onPress={handleSendData}>
+                Submit Report
+            </Button>
+            </Provider>
         </View>
+        </>
+
     );
 };
 
@@ -171,7 +218,14 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         borderWidth: 1,
         borderColor: '#ddd', // Adding border to the image
-    }
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        margin: 50,
+        borderRadius: 10,
+        alignItems: 'center',
+      },
 });
 
 export default ReportPosting;

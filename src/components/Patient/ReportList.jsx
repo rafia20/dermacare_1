@@ -1,15 +1,79 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, RefreshControl, Text ,StyleSheet,Image,Button} from 'react-native';
-import { Card, Paragraph } from 'react-native-paper';
-import { auth, db } from '../../Connection/DB'; // Ensure db is properly imported
+import { View, ScrollView, RefreshControl, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { Card } from 'react-native-paper';
+import { auth, db } from '../../Connection/DB';
 import { get, ref } from 'firebase/database';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-// Reusable Report Card Component
+const styles = StyleSheet.create({
+    card: {
+        margin: 8,
+        borderColor: '#1C2A3A',
+        borderWidth: 1,
+        overflow: 'hidden',
+    },
+    content: {
+        flexDirection: 'row',
+        padding: 8,
+    },
+    image: {
+        width: 100,
+        height: 100,
+        marginRight: 8,
+        borderRadius: 50,
+    },
+    details: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    actions: {
+        flexDirection: 'row',
+        marginTop: 8,
+        justifyContent: 'flex-end',
+    },
+    actionItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF',
+        borderColor: '#1C2A3A',
+        borderWidth: 1,
+        borderRadius: 4,
+        padding: 4,
+        marginRight: 4,
+    },
+    actionText: {
+        marginLeft: 4,
+        color: '#1C2A3A',
+    },
+    statusText: {
+        fontWeight: 'bold',
+    },
+    header: {
+        fontSize: 20,
+        textAlign: 'center',
+        marginVertical: 10,
+        fontWeight: 'bold',
+    },
+    pressedActionItem: {
+        backgroundColor: '#1C2A3A', // Background color when pressed
+        borderColor: '#1C2A3A',
+    },
+    pressedActionText: {
+        color: '#FFFFFF', // Text color when pressed
+    }
+});
+
 const ReportCard = ({ report }) => {
+    const [viewDetailsPressed, setViewDetailsPressed] = useState(false);
+    const [downloadPdfPressed, setDownloadPdfPressed] = useState(false);
+
+    const statusStyle = {
+        color: report.status === 'approved' ? 'green' : (report.status === 'pending' ? '#DAA520' : 'black'),
+    };
+
     return (
         <Card style={styles.card}>
-            
-            <Card.Title title={report.id} subtitle={`Status: ${report.status}`} />
+            <Card.Title title={`ID: ${report.id}`} subtitle={`Status: ${report.status}`} subtitleStyle={[styles.statusText, statusStyle]} />
             <View style={styles.content}>
                 {report.image && (
                     <Image
@@ -18,45 +82,28 @@ const ReportCard = ({ report }) => {
                     />
                 )}
                 <View style={styles.details}>
-                    {/* <Paragraph>{report.description}</Paragraph> */}
-                    <Card.Actions style={styles.actions}>
-                        <Button style={{"borderRadius": 25}} title="View Details" mode="contained" onPress={() => console.log('View Details')}>View Details</Button>
-                        <Button style={{"borderRadius": 25}} title="Download PDF" mode="contained" onPress={() => console.log('Download PDF')}>Download PDF</Button>
-                    </Card.Actions>
+                    <View style={styles.actions}>
+                        <TouchableOpacity
+                            style={[styles.actionItem, viewDetailsPressed && styles.pressedActionItem]}
+                            onPressIn={() => setViewDetailsPressed(true)}
+                            onPressOut={() => setViewDetailsPressed(false)}>
+                            <MaterialCommunityIcons name="eye-outline" size={24} color={viewDetailsPressed ? '#FFFFFF' : '#1C2A3A'} />
+                            <Text style={[styles.actionText, viewDetailsPressed && styles.pressedActionText]}>View Details</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.actionItem, downloadPdfPressed && styles.pressedActionItem]}
+                            onPressIn={() => setDownloadPdfPressed(true)}
+                            onPressOut={() => setDownloadPdfPressed(false)}>
+                            <MaterialCommunityIcons name="file-download-outline" size={24} color={downloadPdfPressed ? '#FFFFFF' : '#1C2A3A'} />
+                            <Text style={[styles.actionText, downloadPdfPressed && styles.pressedActionText]}>Download PDF</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         </Card>
     );
 };
 
-const styles = StyleSheet.create({
-    card: {
-        margin: 8,
-        overflow: 'hidden', // Ensures the content does not overflow the card boundaries
-    },
-    content: {
-        flexDirection: 'row', // Aligns children (image and details) in a row
-        padding: 8,
-    },
-    image: {
-        width: 100,
-        height: 100,
-        marginRight: 8,
-        borderRadius: 50, // Makes the image circular
-    },
-    details: {
-        flex: 1, // Takes up remaining space
-        justifyContent: 'center', // Vertically centers the content inside
-    },
-    actions: {
-        marginTop: 8, // Adds space above the action buttons
-        gap: 8, // Adds space between the action buttons
-        borderRadius:25,
-
-    }
-});
-
-// Main Component that uses the Report Card
 const ReportList = () => {
     const [reports, setReports] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
@@ -64,38 +111,30 @@ const ReportList = () => {
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
-            if (user) {
-                setUid(user.uid);
-            } else {
-                // Set a default user ID or handle user not found scenario
-                setUid("perpHAw783g5Oc6AgVxxeSaY4F03");
-            }
+            setUid(user ? user.uid : "perpHAw783g5Oc6AgVxxeSaY4F03");
         });
 
-        return () => unsubscribe(); // Clean up the subscription
+        return () => unsubscribe();
     }, []);
 
     useEffect(() => {
         if (uid) {
-            loadReports(); // Load reports when UID is set or changed
+            loadReports();
         }
-    }, [uid]); // Dependency array includes uid to reload reports when uid changes
+    }, [uid]);
 
     const loadReports = () => {
-        if (!uid) return; // If no UID, exit the function
+        if (!uid) return;
         setRefreshing(true);
-        console.log("Loading reports for user", uid);
         get(ref(db, `patients/${uid}/reports/`)).then((snapshot) => {
             if (snapshot.exists()) {
                 const fetchedReports = [];
                 snapshot.forEach(childSnapshot => {
                     fetchedReports.push({ id: childSnapshot.key, ...childSnapshot.val() });
                 });
-                console.log(fetchedReports);
                 setReports(fetchedReports);
             } else {
-                console.log("No data available");
-                setReports([]); // Clear reports if none found
+                setReports([]);
             }
         }).catch((error) => {
             console.error(error);
@@ -105,22 +144,19 @@ const ReportList = () => {
     };
 
     const onRefresh = () => {
-        loadReports(); // Refresh reports data
+        loadReports();
     };
 
     return (
         <ScrollView
             style={{ flex: 1 }}
-            refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
+            <Text style={styles.header}>Patient Reports</Text>
             <View>
-                {reports.length > 0 ? (
-                    reports.map(report => (
-                        <ReportCard key={report.id} report={report} />
-                    ))
-                ) : (
+                {reports.length > 0 ? reports.map(report => (
+                    <ReportCard key={report.id} report={report} />
+                )) : (
                     <Text>No reports available.</Text>
                 )}
             </View>

@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from 'react-native-vector-icons';
 import Home from './Derma/Home';
 import Maps from './Derma/Maps';
-import Booking from './Derma/Booking';
+import VisualSearch from './Derma/VisualSearch';
 import Settings from './Derma/Settings';
 import Header from './Header';
 import RAGChat from '../screens/RAGChat';

@@ -19,6 +19,7 @@ import Classification from './src/components/Derma/Classification';
 import Feedback from './src/screens/Feedback';
 import NewsScreen from './src/screens/NewsScreen';
 import ReportPosting from './src/components/Patient/ReportPosting';
+import VisualSearch from './src/components/Derma/VisualSearch';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +34,7 @@ const App = () => {
         }}
       >
         
+        <Stack.Screen name="Visual Search" component={VisualSearch} />
         <Stack.Screen name="ReportPosting" component={ReportPosting} />
         <Stack.Screen name="News" component={NewsScreen} />
         <Stack.Screen name="Onboarding" component={Onboarding} />

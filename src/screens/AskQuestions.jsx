@@ -31,7 +31,7 @@ const AskQuestions = () => {
     const sendMessage = async () => {
         if (text.trim().length > 0) {
             console.log(text)
-            setMessages(prevMessages => [...prevMessages, { id: prevMessages.length, text, sender: 'user' }]);
+            
             // Simulate a response
             receiveMessage(text);
             setText('');
@@ -44,9 +44,10 @@ const AskQuestions = () => {
             console.log(text);
             setLoading(true);
             
-            const response = await model.generateContent("Do not answer questions that are not related to skin problems." + text);
+            const response = await model.generateContent("Do not answer questions that are not related to skin problems or it's treaments, causes or medications." + text);
             const result = await response.response.text();
             
+            setMessages(prevMessages => [...prevMessages, { id: prevMessages.length, text, sender: 'user' }]);
             setMessages(prevMessages => [...prevMessages, { id: prevMessages.length, text: result, sender: 'bot' }]);
         } catch (error) {
             console.error('Failed to fetch or generate response:', error);

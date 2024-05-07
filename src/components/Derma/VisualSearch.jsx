@@ -44,9 +44,11 @@ const VisualSearch = () => {
 
     const imgs = await AsyncStorage.getItem('images');
     if (imgs) {
+      console.log(imgs)
       setImages(JSON.parse(imgs));
+      setLoading(false);
       return;
-      
+
     }
     console.log('images:', images)
     try {
@@ -63,12 +65,14 @@ const VisualSearch = () => {
       const images = data.tags[0].actions[2].data.value;
       console.log(images[0]);
       setImages(images);
+      console.log('images:', images)
       await AsyncStorage.setItem('images', JSON.stringify(images));
-
+      setLoading(false);
     } catch (error) {
       console.error("Error uploading image: ", error);
+      setLoading(false);
     }
-    setLoading(false);
+
   };
 
   const handleSelectImage = async () => {
@@ -134,79 +138,81 @@ const VisualSearch = () => {
   return (
     <Provider>
       <GeneralHeader title="Visual Search" />
+      <FAB.Group
+        style={styles.fab}
+        open={false}
+        icon={'plus'}
+        actions={[
+          { icon: 'file-image', label: 'Select from Gallery', onPress: () => setModalVisible(true) },
+          { icon: 'camera', label: 'Capture from Camera', onPress: handleCaptureImage },
+        ]}
+        onStateChange={({ open }) => {
+          if (open) {
+            setModalVisible(true); // Open the modal when FAB group is open
+          }
+        }}
+      />
       <ScrollView>
-      <View style={styles.container}>
-        {selectedImage && <Image source={{ uri: selectedImage }} style={styles.image} resizeMode="cover" />}
+        <View style={styles.container}>
+          {selectedImage && <Image source={{ uri: selectedImage }} style={styles.image} resizeMode="cover" />}
 
-        <Button mode='contained' icon={'chart-timeline-variant-shimmer'} onPress={async () => { await uploadImage(selectedImage) }}>Generate Similar Images</Button>
-
-        
+          <Button mode='contained' icon={'chart-timeline-variant-shimmer'} onPress={async () => { await uploadImage(selectedImage) }}>Generate Similar Images</Button>
 
 
-        <FAB.Group
-          open={false}
-          icon={'plus'}
-          actions={[
-            { icon: 'file-image', label: 'Select from Gallery', onPress: () => setModalVisible(true) },
-            { icon: 'camera', label: 'Capture from Camera', onPress: handleCaptureImage },
-          ]}
-          onStateChange={({ open }) => {
-            if (open) {
-              setModalVisible(true); // Open the modal when FAB group is open
-            }
-          }}
-        />
-        {loading ? <ActivityIndicator style={{ flex: 1, justifyContent: 'center' }} size="large" /> :
-        
-        <ScrollView >
-          <Text variant="headlineMedium">Headline Medium</Text>
-          {images.map((item, index) => (
-            <>
-            <Card key={index} style={styles.card}>
-              {item.contentUrl && (
-                <Card.Cover source={{ uri: item.contentUrl }} />
-              )}
-              <Card.Content>
-                <Title>{item.name}</Title>
-                <Paragraph>{item.description}</Paragraph>
-              </Card.Content>
-              <Card.Actions style={{ flex: 1, justifyContent: 'space-between' }}>
 
-                <Text style={{ 'marginRight': 'auto' }}> {formatDate(item.datePublished)} </Text>
-                <Button
-                  icon="link"
-                  mode="contained"
-                  onPress={() => Linking.openURL(item.webSearchUrl)}
-                  
-                >
-                  Show URL
-                </Button>
-                
-                
 
-              </Card.Actions>
-            </Card>
-            
-            <Text id={index+'a'}/>
-            </>
-          ))}
 
-        </ScrollView>
-        }
+          {loading ? <ActivityIndicator style={{ flex: 1, justifyContent: 'center' }} size="large" /> :
 
-        {/* {selectedImage && (
+            <ScrollView >
+              <Text variant="headlineMedium">Headline Medium</Text>
+              {images.map((item, index) => (
+                <>
+                  <Card key={index} style={styles.card}>
+                    {item.contentUrl && (
+                      <Card.Cover source={{ uri: item.contentUrl }} />
+                    )}
+                    <Card.Content>
+                      <Title>{item.name}</Title>
+                      <Paragraph>{item.description}</Paragraph>
+                    </Card.Content>
+                    <Card.Actions style={{ flex: 1, justifyContent: 'space-between' }}>
+
+                      <Text style={{ 'marginRight': 'auto' }}> {formatDate(item.datePublished)} </Text>
+                      <Button
+                        icon="link"
+                        mode="contained"
+                        onPress={() => Linking.openURL(item.webSearchUrl)}
+
+                      >
+                        Show URL
+                      </Button>
+
+
+
+                    </Card.Actions>
+                  </Card>
+
+                  <Text key={'index' + index} id={index + 'a'} />
+                </>
+              ))}
+
+            </ScrollView>
+          }
+
+          {/* {selectedImage && (
           <View style={styles.processButton}>
             <FAB icon="check" onPress={handleProcessImage} />
           </View>
         )} */}
 
-        <Portal>
-          <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={styles.modalContent}>
-            <Button onPress={handleSelectImage}>Choose from Gallery</Button>
-            <Button onPress={handleCaptureImage}>Capture from Camera</Button>
-          </Modal>
-        </Portal>
-      </View>
+          <Portal>
+            <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={styles.modalContent}>
+              <Button onPress={handleSelectImage}>Choose from Gallery</Button>
+              <Button onPress={handleCaptureImage}>Capture from Camera</Button>
+            </Modal>
+          </Portal>
+        </View>
       </ScrollView>
     </Provider>
   );
@@ -234,6 +240,13 @@ const styles = StyleSheet.create({
     margin: 50,
     borderRadius: 10,
     alignItems: 'center',
+  },
+  fab: {
+    position: 'absolute', // Position the FAB absolutely
+    margin: 16,
+    right: 0, // Align to the right
+    bottom: 0, // Align to the bottom
+    zIndex: 1,
   },
 });
 

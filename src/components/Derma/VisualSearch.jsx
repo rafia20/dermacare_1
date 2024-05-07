@@ -231,11 +231,6 @@ const VisualSearch = ({route}) => {
             </ScrollView>
           }
 
-          {/* {selectedImage && (
-          <View style={styles.processButton}>
-            <FAB icon="check" onPress={handleProcessImage} />
-          </View>
-        )} */}
 
           <Portal>
             <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={styles.modalContent}>

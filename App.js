@@ -20,6 +20,7 @@ import Feedback from './src/screens/Feedback';
 import NewsScreen from './src/screens/NewsScreen';
 import ReportPosting from './src/components/Patient/ReportPosting';
 import VisualSearch from './src/components/Derma/VisualSearch';
+import DiseaseInformationScreen from './src/screens/DiseaseInformationScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,7 +34,7 @@ const App = () => {
           animationTypeForReplace: 'pop',
         }}
       >
-        
+        <Stack.Screen name="Disease Information" component={DiseaseInformationScreen} />
         <Stack.Screen name="Visual Search" component={VisualSearch} />
         <Stack.Screen name="ReportPosting" component={ReportPosting} />
         <Stack.Screen name="News" component={NewsScreen} />

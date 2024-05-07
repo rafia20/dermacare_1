@@ -18,11 +18,7 @@ const VisualSearch = ({route}) => {
   const scrollToTop = () => {
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   };
-  if (route.params?.image) {
-    console.log('Image:', route.params.image);
-    setSelectedImage(route.params.image);
-  }
-  
+
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
@@ -34,6 +30,16 @@ const VisualSearch = ({route}) => {
   useEffect(() => {
     console.log('selectedImage:', selectedImage);
   }, [selectedImage]);
+
+  useEffect(() => {
+
+  if (route.params?.image) {
+    console.log('Image:', route.params.image);
+    const uri = Image.resolveAssetSource(route.params.image).uri;
+    setSelectedImage(uri);
+  }
+  }, [route.params?.image]);
+  
 
 
   const uploadImage = async (imageUri) => {

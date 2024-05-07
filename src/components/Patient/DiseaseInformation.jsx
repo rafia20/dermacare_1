@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { Card, Button, Text } from 'react-native-paper';
 
 const DiseaseInformation = ({ disease, image }) => {
+    
     return (
         <Card>
             <View style={{backgroundColor: '#e5c3eb', borderRadius: 5}}>
@@ -10,7 +11,7 @@ const DiseaseInformation = ({ disease, image }) => {
             </View>
             <Text/>
             <Card.Content>
-                <Card.Cover source={{ uri: image }} />
+                <Card.Cover source={image} />
 
             </Card.Content>
             <Card.Actions>

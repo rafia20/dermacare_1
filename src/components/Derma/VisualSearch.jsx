@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Image, Alert, ScrollView, Linking } from 'react-native';
-import { FAB, Portal, Provider, Modal, Button, Card, Title, Paragraph, Text, ActivityIndicator } from 'react-native-paper';
+import { FAB, Portal, Provider, Modal, Button, Card, Title, Paragraph, Text, ActivityIndicator, PaperProvider, Divider } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import GeneralHeader from '../GeneralHeader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const VisualSearch = () => {
+const VisualSearch = ({route}) => {
+  if (route.params?.image) {
+    console.log('Image:', route.params.image);
+    setSelectedImage(route.params.image);
+  }
+  
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
@@ -21,6 +26,11 @@ const VisualSearch = () => {
 
   const uploadImage = async (imageUri) => {
     setLoading(true);
+    if (!imageUri) {
+      Alert.alert('No image selected', 'Please select an image before uploading.', [{ text: 'OK' }]);
+      setLoading(false);
+      return;
+    }
     const uriParts = imageUri.split('.');
     const fileType = uriParts[uriParts.length - 1];
     let bytes;
@@ -156,16 +166,20 @@ const VisualSearch = () => {
         <View style={styles.container}>
           {selectedImage && <Image source={{ uri: selectedImage }} style={styles.image} resizeMode="cover" />}
 
-          <Button mode='contained' icon={'chart-timeline-variant-shimmer'} onPress={async () => { await uploadImage(selectedImage) }}>Generate Similar Images</Button>
+          
+          {selectedImage? <Button loading={loading} mode='contained-tonal' icon={'chart-timeline-variant-shimmer'} onPress={async () => { await uploadImage(selectedImage) }}>{loading? 'Generating': 'Generate'} Similar Images</Button> : <Text>No Image Selected</Text>} 
+
+          
+          <Divider  bold={true} theme={{colors: {primary:'green'}}} style={{ marginVertical: 10, zIndex: 2, color:'blue', height:5 }} />   
 
 
 
-
-
-          {loading ? <ActivityIndicator style={{ flex: 1, justifyContent: 'center' }} size="large" /> :
+          {loading ? <Text/> :
 
             <ScrollView >
-              <Text variant="headlineMedium">Headline Medium</Text>
+              {images.length>0 ? <Text style={{'color': 'purple', fontWeight: '400', marginLeft: 'auto', marginRight:'auto', borderTopWidth: 1, borderBottomWidth: 1, paddingVertical: 4}} variant="headlineMedium">Similar Images</Text> : ''} 
+              <Text/>
+              
               {images.map((item, index) => (
                 <>
                   <Card key={index} style={styles.card}>
@@ -185,7 +199,7 @@ const VisualSearch = () => {
                         onPress={() => Linking.openURL(item.webSearchUrl)}
 
                       >
-                        Show URL
+                        Open Source
                       </Button>
 
 

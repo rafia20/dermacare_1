@@ -1,18 +1,20 @@
 import React from 'react';
+import { View } from 'react-native';
 import { Card, Button, Text } from 'react-native-paper';
 
 const DiseaseInformation = ({ disease, image }) => {
-    console.log(disease)
     return (
         <Card>
-            <Card.Title focusable style={{}} title={disease} />
+            <View style={{backgroundColor: '#e5c3eb', borderRadius: 5}}>
+                <Text style={{ marginLeft: 'auto', marginRight: 'auto', padding: 20, width:'auto', fontSize: 25 }} variant='titleMedium'> {disease} </Text>
+            </View>
+            <Text/>
             <Card.Content>
-                <Card.Cover source={{ uri: image }} /> 
-                
+                <Card.Cover source={{ uri: image }} />
+
             </Card.Content>
             <Card.Actions>
-                <Button onPress={() => console.log('Ask Questions')}>Ask Questions</Button>
-                <Button onPress={() => console.log('View Symptoms')}>View Symptoms</Button>
+                <Button icon={'chat-question-outline'} style={{width: '100%'}} mode='contained' onPress={() => console.log('Ask Questions')}>Ask Questions</Button>
             </Card.Actions>
         </Card>
     );

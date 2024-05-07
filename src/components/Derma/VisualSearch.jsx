@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Image, Alert, ScrollView, Linking } from 'react-native';
+import { View, StyleSheet, Image, Alert, ScrollView, Linking, TouchableOpacity } from 'react-native';
 import { FAB, Portal, Provider, Modal, Button, Card, Title, Paragraph, Text, ActivityIndicator, PaperProvider, Divider } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import GeneralHeader from '../GeneralHeader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRef } from 'react';
 
 const VisualSearch = ({route}) => {
+  const scrollViewRef = useRef();  // Add this line
+  const [showScrollToTop, setShowScrollToTop] = useState(false)
+
+  const onScroll = (event) => {
+    const y = event.nativeEvent.contentOffset.y;
+    setShowScrollToTop(y > 200);  // Show button when scrolled more than 200 pixels
+  };
+
+  const scrollToTop = () => {
+    scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+  };
   if (route.params?.image) {
     console.log('Image:', route.params.image);
     setSelectedImage(route.params.image);
@@ -162,7 +174,12 @@ const VisualSearch = ({route}) => {
           }
         }}
       />
-      <ScrollView>
+      
+      <ScrollView
+        ref={scrollViewRef}
+        onScroll={onScroll}
+        scrollEventThrottle={5} // 16ms is 60fps
+      >
         <View style={styles.container}>
           {selectedImage && <Image source={{ uri: selectedImage }} style={styles.image} resizeMode="cover" />}
 
@@ -228,6 +245,16 @@ const VisualSearch = ({route}) => {
           </Portal>
         </View>
       </ScrollView>
+
+
+      {showScrollToTop && (
+        <TouchableOpacity
+          onPress={scrollToTop}
+          style={styles.scrollToTopButton}
+        >
+          <Button icon={'format-vertical-align-top'}>Up</Button>
+        </TouchableOpacity>
+      )}
     </Provider>
   );
 };
@@ -262,6 +289,16 @@ const styles = StyleSheet.create({
     bottom: 0, // Align to the bottom
     zIndex: 1,
   },
+  scrollToTopButton: {
+    position: 'absolute',
+    right: 20,
+    bottom: 100,
+    backgroundColor: '#ddd',
+    padding: 10,
+    borderRadius: 20,
+    elevation: 3,
+  },
+  
 });
 
 export default VisualSearch;

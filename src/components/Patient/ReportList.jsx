@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, RefreshControl, Text ,StyleSheet,Image,Button} from 'react-native';
+import { View, ScrollView, RefreshControl, Text, StyleSheet, Image, Button } from 'react-native';
 import { Card, Paragraph } from 'react-native-paper';
 import { auth, db } from '../../Connection/DB'; // Ensure db is properly imported
 import { get, ref } from 'firebase/database';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import GeneralHeader from '../GeneralHeader';
 
 
 // Reusable Report Card Component
@@ -13,7 +14,7 @@ const ReportCard = ({ report, uid }) => {
     // AsyncStorage.setItem("role", "patient")
     return (
         <Card style={styles.card}>
-            
+
             <Card.Title title={report.id} subtitle={`Status: ${report.status}`} />
             <View style={styles.content}>
                 {report.image && (
@@ -25,9 +26,9 @@ const ReportCard = ({ report, uid }) => {
                 <View style={styles.details}>
                     {/* <Paragraph>{report.description}</Paragraph> */}
                     <Card.Actions style={styles.actions}>
-                        <Button style={{"borderRadius": 25}} title="View Details" mode="contained" onPress={() => console.log('View Details')}>View Details</Button>
-                        <Button style={{"borderRadius": 25}} title="Download PDF" mode="contained" onPress={() => console.log('Download PDF')}>Download PDF</Button>
-                        <Button style={{"borderRadius": 25}} title="Chat" mode="contained" onPress={() => navigation.navigate('Chat', { reportId: report.id , patientId: uid})}>Chat</Button>
+                        <Button style={{ "borderRadius": 25 }} title="View Details" mode="contained" onPress={() => console.log('View Details')}>View Details</Button>
+                        <Button style={{ "borderRadius": 25 }} title="Download PDF" mode="contained" onPress={() => console.log('Download PDF')}>Download PDF</Button>
+                        <Button style={{ "borderRadius": 25 }} title="Chat" mode="contained" onPress={() => navigation.navigate('Chat', { reportId: report.id, patientId: uid })}>Chat</Button>
                     </Card.Actions>
                 </View>
             </View>
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     actions: {
         marginTop: 8, // Adds space above the action buttons
         gap: 8, // Adds space between the action buttons
-        borderRadius:25,
+        borderRadius: 25,
 
     }
 });
@@ -115,22 +116,25 @@ const ReportList = () => {
     };
 
     return (
-        <ScrollView
-            style={{ flex: 1 }}
-            refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-        >
-            <View>
-                {reports.length > 0 ? (
-                    reports.map(report => (
-                        <ReportCard key={report.id} report={report} uid={uid}/>
-                    ))
-                ) : (
-                    <Text>No reports available.</Text>
-                )}
-            </View>
-        </ScrollView>
+        <>
+            <GeneralHeader title="Reports" />
+            <ScrollView
+                style={{ flex: 1 }}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+            >
+                <View>
+                    {reports.length > 0 ? (
+                        reports.map(report => (
+                            <ReportCard key={report.id} report={report} uid={uid} />
+                        ))
+                    ) : (
+                        <Text>No reports available.</Text>
+                    )}
+                </View>
+            </ScrollView>
+        </>
     );
 };
 

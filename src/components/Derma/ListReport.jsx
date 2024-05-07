@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, TouchableOpacity, StyleSheet, Text, RefreshControl } from 'react-native';
-import { Card, Button } from 'react-native-paper';
+import { Card, Button, ToggleButton } from 'react-native-paper';
 import GeneralHeader from '../GeneralHeader';
 import FeedbackModal from '../FeedbackModal';
 import ViewDetailsModal from '../ViewDetailsModal';
@@ -18,6 +18,9 @@ const ListReport = ({ route, navigation }) => {
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const [patientReports, setPatientReports] = useState([]);
   const [patientId, setPatientId] = useState(uid);
+  const [statusFilter, setStatusFilter] = useState('approved'); // 'approved' or 'pending'
+  const [filteredReports, setFilteredReports] = useState([]);
+
   useEffect(() => {
     fetchReports();
   }, []);
@@ -37,7 +40,7 @@ const ListReport = ({ route, navigation }) => {
         }
         console.log(reports);
         setPatientReports(reports);
-
+        setFilteredReports(reports.filter(report => report.status === statusFilter));
         // Here you might want to set this data to your component state
       } else {
         console.log('No data available');
@@ -77,7 +80,20 @@ const ListReport = ({ route, navigation }) => {
   return (
     <>
       <GeneralHeader title={'Reports'} />
+
       <View style={styles.container}>
+        
+        <ToggleButton.Row
+          style={{marginLeft: 'auto', marginRight: 'auto'}}
+          
+          onValueChange={value => setStatusFilter(value)}
+          value={statusFilter}
+        >
+          <ToggleButton  onPress={()=>{ setFilteredReports(patientReports.filter(report => report.status === 'approved')) }} icon="check" value="approved">Approved</ToggleButton>
+          <ToggleButton onPress={()=>{ setFilteredReports(patientReports.filter(report => report.status != 'approved')) }} icon="close" value="pending">Pending</ToggleButton>
+        </ToggleButton.Row>
+
+        <Text>Filter by status:</Text>
         <ScrollView
           style={styles.scrollView}
           refreshControl={
@@ -87,11 +103,12 @@ const ListReport = ({ route, navigation }) => {
             />
           }
         >
- 
 
- 
 
-          {patientReports.map(report => (
+
+          {patientReports.length < 1 && <Text>No reports available.</Text>}
+
+          {filteredReports.map(report => (
             <Card key={report.id} style={styles.card}>
               <Card.Title title={report.id} />
               <Card.Content>
@@ -121,11 +138,11 @@ const ListReport = ({ route, navigation }) => {
 
                 <TouchableOpacity
                   style={[styles.button, { backgroundColor: 'green' }]}
-                  onPress={() => navigation.navigate('Chat', { reportId: report.id , patientId: patientId})}
+                  onPress={() => navigation.navigate('Chat', { reportId: report.id, patientId: patientId })}
                 >
                   <Button textColor="#FFFFFF">Chat</Button>
                 </TouchableOpacity>
-      
+
               </Card.Actions>
             </Card>
           ))}
@@ -137,7 +154,7 @@ const ListReport = ({ route, navigation }) => {
 
       {/* View Details Modal */}
       <ViewDetailsModal visible={detailsModalVisible} onClose={() => setDetailsModalVisible(false)} />
-      
+
     </>
   );
 };
@@ -153,11 +170,11 @@ const styles = StyleSheet.create({
   },
   card: {
     marginBottom: 10,
-    backgroundColor: '#FFFFFF', // White card background
+    // backgroundColor: '#FFFFFF', // White card background
     elevation: 4,
     borderRadius: 8,
-    borderColor: 'lightblue',
-    borderWidth: 1,
+    // borderColor: 'lightblue',
+    // borderWidth: 1,
   },
   descriptionText: {
     fontSize: 16,

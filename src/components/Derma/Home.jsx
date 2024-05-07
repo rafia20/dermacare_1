@@ -5,6 +5,7 @@ import SearchBar from '../SearchBar';
 import { get, ref } from 'firebase/database';
 import { auth, db } from '../../Connection/DB';
 import { getAuth } from 'firebase/auth';
+import GeneralHeader from '../GeneralHeader';
 
 
 const Home = () => {
@@ -73,6 +74,7 @@ const Home = () => {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff5f5' }}>
+            <GeneralHeader title="Patients" />
             <SearchBar onSearch={handleSearch} />
             <FlatList
                 data={filteredPatients}

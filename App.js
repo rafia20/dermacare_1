@@ -35,6 +35,10 @@ const App = () => {
           animationTypeForReplace: 'pop',
         }}
       >
+
+<Stack.Screen name='Home' component={Home} />
+        <Stack.Screen name="listreport" component={ListReport} />
+        <Stack.Screen name="AllReports" component={ReportList} />
         <Stack.Screen name="Ask Questions" component={AskQuestions} />
         <Stack.Screen name="Disease Information" component={DiseaseInformationScreen} />
         <Stack.Screen name="Visual Search" component={VisualSearch} />
@@ -47,18 +51,18 @@ const App = () => {
         <Stack.Screen name="Feedback" component={Feedback} />
         {/* <Stack.Screen name="Patient" component={PatientBottomMenu} /> */}
         <Stack.Screen name='Chat with AI' component={RAGChat} />
-        <Stack.Screen name='Home' component={Home} />
-        <Stack.Screen name='Chat' component={Chat} />
         
+        <Stack.Screen name='Chat' component={Chat} />
+
 
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="AddProfile" component={AddProfile} />
         <Stack.Screen name="Signup" component={Signup} />
-        
 
-        <Stack.Screen name="listreport" component={ListReport} />
+
+
         <Stack.Screen name="locationData" component={LocationData} />
-        <Stack.Screen name="AllReports" component={ReportList} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

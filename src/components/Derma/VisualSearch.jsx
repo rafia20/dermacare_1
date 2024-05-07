@@ -57,12 +57,19 @@ const VisualSearch = ({route}) => {
 
     console.log(blob);
 
+    let updatedFileType = fileType;
+    
+    if (fileType.includes('&')) {
+      updatedFileType = fileType.split("&")[0];
+    }
 
+    
+    console.log(updatedFileType)
     const formData = new FormData();
     formData.append('image', {
       uri: imageUri,
       name: `photo.${fileType}`,
-      type: `image/${fileType}`,
+      type: `image/${updatedFileType}`,
     });
 
     const headers = {
@@ -70,7 +77,8 @@ const VisualSearch = ({route}) => {
       'Content-Type': 'multipart/form-data',
     };
 
-    const imgs = await AsyncStorage.getItem('images');
+    let imgs = await AsyncStorage.getItem('images');
+    // imgs = undefined;
     if (imgs) {
       console.log(imgs)
       setImages(JSON.parse(imgs));
@@ -206,9 +214,12 @@ const VisualSearch = ({route}) => {
               {images.map((item, index) => (
                 <>
                   <Card key={index} style={styles.card}>
-                    {item.contentUrl && (
+                    {item.contentUrl? (
                       <Card.Cover source={{ uri: item.contentUrl }} />
-                    )}
+                    ): item.thumbnailUrl? (
+                      <Card.Cover source={{ uri: item.thumbnailUrl }} />
+                    ): <Text>Image not available</Text>}
+
                     <Card.Content>
                       <Title>{item.name}</Title>
                       <Paragraph>{item.description}</Paragraph>

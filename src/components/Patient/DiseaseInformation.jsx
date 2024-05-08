@@ -1,8 +1,10 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { View } from 'react-native';
 import { Card, Button, Text } from 'react-native-paper';
 
 const DiseaseInformation = ({ disease, image }) => {
+    const navigation = useNavigation();
     
     return (
         <Card>
@@ -15,7 +17,7 @@ const DiseaseInformation = ({ disease, image }) => {
 
             </Card.Content>
             <Card.Actions>
-                <Button icon={'chat-question-outline'} style={{width: '100%'}} mode='contained' onPress={() => console.log('Ask Questions')}>Ask Questions</Button>
+                <Button icon={'chat-question-outline'} style={{width: '100%'}} mode='contained' onPress={() => navigation.navigate("Ask Questions", {disease: disease})}>Ask Questions</Button>
             </Card.Actions>
         </Card>
     );

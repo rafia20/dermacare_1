@@ -21,12 +21,12 @@ const NewsScreen = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  
+
   const fetchNewsData = async () => {
     try {
       const response = await fetch('https://api.bing.microsoft.com/v7.0/news/search?q=dermatology&count=50&textdecorations=true', {
         headers: {
-          'Ocp-Apim-Subscription-Key' : 'd3f09dc9c39e47dba03f6be717280449'
+          'Ocp-Apim-Subscription-Key': 'd3f09dc9c39e47dba03f6be717280449'
         }
       });
       const data = await response.json();
@@ -53,7 +53,6 @@ const NewsScreen = () => {
 
   return (
     <>
-      <GeneralHeader title="News" />
       <ScrollView
         style={styles.container}
         refreshControl={
@@ -61,35 +60,35 @@ const NewsScreen = () => {
         }
       >
         {
-        
-        newsData?.map((item, index) => (
-          <>
-          <Card key={index} style={styles.card}>
-            {item.image?.thumbnail && (
-              <Card.Cover source={{ uri: item.image.thumbnail.contentUrl }} />
-            )}
-            <Card.Content>
-              <Title>{item.name}</Title>
-              <Paragraph>{item.description}</Paragraph>
-            </Card.Content>
-            <Card.Actions style={{flex:1, justifyContent:'space-between'}}>
-              
-            <Text style={{'marginRight' : 'auto'}}> {formatDate(item.datePublished)} </Text>
-              <Button
-                icon="book-open-outline"
-                mode="contained"
-                onPress={() => Linking.openURL(item.url)}
-                color={colors.primary}
-              >
-                Read More
-              </Button>
 
-              
-            </Card.Actions>
-          </Card>
-          <Divider key={index + "divider"} />
-          </>
-        ))}
+          newsData?.map((item, index) => (
+            <>
+              <Card key={index} style={styles.card}>
+                {item.image?.thumbnail && (
+                  <Card.Cover source={{ uri: item.image.thumbnail.contentUrl }} />
+                )}
+                <Card.Content key={index + " news"}>
+                  <Title>{item.name}</Title>
+                  <Paragraph>{item.description}</Paragraph>
+                </Card.Content>
+                <Card.Actions style={{ flex: 1, justifyContent: 'space-between' }}>
+
+                  <Text style={{ 'marginRight': 'auto' }}> {formatDate(item.datePublished)} </Text>
+                  <Button
+                    icon="book-open-outline"
+                    mode="contained"
+                    onPress={() => Linking.openURL(item.url)}
+                    color={colors.primary}
+                  >
+                    Read More
+                  </Button>
+
+
+                </Card.Actions>
+              </Card>
+              <Divider key={index + "divider"} />
+            </>
+          ))}
       </ScrollView>
     </>
   );

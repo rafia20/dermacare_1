@@ -5,8 +5,9 @@ import { TextInput, Text, Button, Appbar, useTheme } from 'react-native-paper';
 import Loading from '../components/Loading';
 import GeneralHeader from '../components/GeneralHeader';
 
-const AskQuestions = () => {
-    
+const AskQuestions = ({route}) => {
+
+    console.log(route.params)
     const [text, setText] = useState('');
     const [messages, setMessages] = useState([]);
     const { colors } = useTheme();
@@ -15,6 +16,21 @@ const AskQuestions = () => {
 
     const genAI = new GoogleGenerativeAI("AIzaSyAmf5o7tzb0Nq9K9eS3m2HXX7nSrBZokwg");
     const model = genAI.getGenerativeModel({ model: "gemini-pro", 'safetySettings': {threshold: HarmBlockThreshold.BLOCK_NONE, category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT}});
+
+    useEffect(() => {
+        async function startQuestion() {
+           
+        if (route.params){
+            console.log(route.params.disease)
+
+            if (route.params.disease){
+                setText("What are the symptoms, causes, and possible treaments of " +  route.params.disease);
+            }
+        }
+    }
+    startQuestion();
+    }), [route.params];
+
     // useEffect(() => {
     //     const getSession = async () => {
 

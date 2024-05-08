@@ -74,7 +74,7 @@ const Home = () => {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff5f5' }}>
-            <GeneralHeader title="Patients" />
+            {/* <GeneralHeader title="Patients" /> */}
             <SearchBar onSearch={handleSearch} />
             <FlatList
                 data={filteredPatients}

@@ -27,12 +27,18 @@ const PatientBottomMenu = () => {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Maps') {
             iconName = focused ? 'map' : 'map-outline';
-          } else if (route.name === 'Bookings') {
+          } else if (route.name === 'AllReports') {
             iconName = focused ? 'calendar' : 'calendar-outline';
+          } else if (route.name === 'Search Disease') {
+            iconName = focused ? 'layers-search' : 'layers-search';
           } else if (route.name === 'Settings') {
-            iconName = focused ? 'cog' : 'cog-outline'; // Assuming 'cog' is the icon for settings
+            iconName = focused ? 'cog' : 'cog-outline';
+          } else if (route.name === 'News') {
+            iconName = focused ? 'newspaper' : 'newspaper';
+          } else if (route.name === 'Visual Search') {
+            iconName = focused ? 'database-eye' : 'database-eye';
           }
-
+       
           return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
         },
       
@@ -45,7 +51,7 @@ const PatientBottomMenu = () => {
       <Tab.Screen options={{ headerShown: false }} name="Visual Search" component={VisualSearch} />
       <Tab.Screen options={{ headerShown: false }} name="News" component={NewsScreen} />
       <Tab.Screen options={{ headerShown: false }} name="Search Disease" component={DiseaseInformationScreen} />
-      {/* <Tab.Screen options={{ headerShown: false }} name="Bookings" component={Booking} /> */}
+    
       <Tab.Screen options={{ headerShown: false }} name="Maps" component={Maps} />
       <Tab.Screen options={{ headerShown: false }} name="Settings" component={Settings} />
     </Tab.Navigator>

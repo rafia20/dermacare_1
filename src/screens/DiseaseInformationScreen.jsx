@@ -398,7 +398,7 @@ const DiseaseInformationScreen = () => {
     
     return (
         <View style={{ flex: 1 }}>
-            <GeneralHeader title="Disease Information" />
+            {/* <GeneralHeader title="Disease Information" /> */}
             <Searchbar
                 mode='view'
                 placeholder="Search Diseases"

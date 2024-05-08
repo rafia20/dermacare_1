@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text,  TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
+import { Button, TextInput } from 'react-native-paper';
 import tw from 'twrnc';
 import { auth, provider } from '../Connection/DB';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
@@ -32,7 +33,7 @@ const navigation = useNavigation()
 
   return (
     <SafeAreaView style={tw`flex-1 `}>
-      <Text className='text-xl text-center font-bold py-2 bg-blue-600 w-full px-2 text-white'>Signup</Text>
+      {/* <Text className='text-xl text-center font-bold py-2 bg-blue-600 w-full px-2 text-white'>Signup</Text> */}
       <ScrollView contentContainerStyle={tw`p-4 justify-center items-center flex-grow bg-white`}>
         
         <Image
@@ -42,31 +43,36 @@ const navigation = useNavigation()
 
 
         <TextInput
+        mode='outlined'
+        label={'Email'}
           value={email}
           onChangeText={setEmail}
           placeholder="Email"
           keyboardType="email-address"
           autoCapitalize="none"
-          style={tw`bg-white w-full mb-4 p-3 rounded-lg border border-gray-300`}
+          style={tw`bg-white w-full mb-4 rounded-lg `}
         />
 
         <TextInput
+         mode='outlined'
+         label={'Password'}
           value={password}
           onChangeText={setPassword}
           placeholder="Password"
           secureTextEntry={true}
           autoCapitalize="none"
-          style={tw`bg-white w-full mb-4 p-3 rounded-lg border border-gray-300`}
+          style={tw`bg-white w-full mb-4 rounded-lg `}
         />
 
      
 
-        <TouchableOpacity
+        <Button
           onPress={handleSignup}
-          style={tw`bg-blue-600 w-full p-3 rounded-lg`}
+          mode='contained'
+          style={tw` w-full rounded-lg`}
         >
           <Text style={tw`text-white text-center text-lg font-semibold`}>Signup</Text>
-        </TouchableOpacity>
+        </Button>
         <TouchableOpacity onPress={() => {navigation.navigate('Login')}}>
           <Text style={tw`text-blue-600 mb-8 text-right py-4`}>Already have account ? Login</Text>
         </TouchableOpacity>

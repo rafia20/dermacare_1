@@ -28,6 +28,8 @@ const BottomNavDerma = () => {
             iconName = focused ? 'chat' : 'chat-outline';
           } else if (route.name === 'Settings') {
             iconName = focused ? 'cog' : 'cog-outline'; // Assuming 'cog' is the icon for settings
+          }else if (route.name === 'Visual Search') {
+            iconName = focused ? 'database-eye' : 'database-eye';
           }
 
           return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
@@ -40,6 +42,7 @@ const BottomNavDerma = () => {
       <Tab.Screen options={{ headerShown: false }} name="Home" component={Home} />
       <Tab.Screen options={{ headerShown: false }} name="Maps" component={Maps} />
       <Tab.Screen options={{ headerShown: false }} name="AI Chat" component={RAGChat} />
+      <Tab.Screen options={{ headerShown: false }} name="Visual Search" component={VisualSearch} />
       <Tab.Screen options={{ headerShown: false }} name="Settings" component={Settings} />
     </Tab.Navigator>
     </>

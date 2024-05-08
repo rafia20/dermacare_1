@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, TouchableOpacity, StyleSheet, Text, RefreshControl } from 'react-native';
-import { Card, Button, ToggleButton } from 'react-native-paper';
+import { View, ScrollView, RefreshControl, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
+import { Card, Button } from 'react-native-paper';
 import GeneralHeader from '../GeneralHeader';
 import FeedbackModal from '../FeedbackModal';
 import ViewDetailsModal from '../ViewDetailsModal';
-import { get, ref, set } from 'firebase/database';
-import { db } from '../../Connection/DB';  // Make sure you import your database instance correctl
-import { Image } from 'react-native';
-
+import { get, ref } from 'firebase/database';
+import { db } from '../../Connection/DB';
+import tw from 'twrnc';
 
 const ListReport = ({ route, navigation }) => {
   const { uid } = route.params;
@@ -17,51 +16,53 @@ const ListReport = ({ route, navigation }) => {
   const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const [patientReports, setPatientReports] = useState([]);
-  const [patientId, setPatientId] = useState(uid);
-  const [statusFilter, setStatusFilter] = useState('approved'); // 'approved' or 'pending'
+  const [statusFilter, setStatusFilter] = useState('approved'); // Default filter
   const [filteredReports, setFilteredReports] = useState([]);
 
   useEffect(() => {
     fetchReports();
   }, []);
 
+  useEffect(() => {
+    filterReportsByStatus();
+  }, [statusFilter, patientReports]);
+
   const fetchReports = () => {
-    setRefreshing(true); // Start refreshing
-    get(ref(db, 'patients')).then((snapshot) => {
-      if (snapshot.exists()) {
-        console.log(patientId)
-        const reports = [];
-        const snap = snapshot.val();
-        console.log(snap[patientId])
-        if (snap[patientId].reports) {
-          for (const key in snap[patientId].reports) {
-            reports.push({ id: key, ...snap[patientId].reports[key] });
-          }
+    setRefreshing(true);
+    get(ref(db, `patients/${uid}/reports`))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          const reports = [];
+          snapshot.forEach((childSnapshot) => {
+            reports.push({ id: childSnapshot.key, ...childSnapshot.val() });
+          });
+          console.log(reports);
+          setPatientReports(reports);
+        } else {
+          console.log('No data available');
         }
-        console.log(reports);
-        setPatientReports(reports);
-        setFilteredReports(reports.filter(report => report.status === statusFilter));
-        // Here you might want to set this data to your component state
-      } else {
-        console.log('No data available');
-      }
-    }).catch((error) => {
-      console.error(error);
-    }).finally(() => {
-      setRefreshing(false); // End refreshing
-    });
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setRefreshing(false);
+      });
+  };
+
+  const filterReportsByStatus = () => {
+    setFilteredReports(
+      patientReports.filter((report) =>
+        statusFilter === 'approved'
+          ? report.status.toLowerCase() === 'approved'
+          : report.status.toLowerCase() !== 'approved'
+      )
+    );
   };
 
   const onRefresh = () => {
-    console.log("Refreshing...");
-    fetchReports(); // Call fetch reports which handles setting refreshing
+    fetchReports();
   };
-
-  const reports = [
-    { id: 1, title: 'Report 1', description: 'This is the first report.', status: 'Approved' },
-    { id: 2, title: 'Report 2', description: 'This is the second report.', status: 'Rejected' },
-    { id: 3, title: 'Report 3', description: 'This is the third report.', status: 'Approved' },
-  ];
 
   const handleFeedback = (reportTitle) => {
     console.log(`Feedback for ${reportTitle}`);
@@ -74,7 +75,7 @@ const ListReport = ({ route, navigation }) => {
   };
 
   const getStatusColor = (status) => {
-    return status === 'Approved' ? '#28A745' : '#DC3545';
+    return status.toLowerCase() === 'approved' ? '#28A745' : '#DC3545';
   };
 
   return (
@@ -82,35 +83,42 @@ const ListReport = ({ route, navigation }) => {
       <GeneralHeader title={'Reports'} />
 
       <View style={styles.container}>
-        
-        <ToggleButton.Row
-          style={{marginLeft: 'auto', marginRight: 'auto'}}
-          
-          onValueChange={value => setStatusFilter(value)}
-          value={statusFilter}
-        >
-          <ToggleButton  onPress={()=>{ setFilteredReports(patientReports.filter(report => report.status === 'approved')) }} icon="check" value="approved">Approved</ToggleButton>
-          <ToggleButton onPress={()=>{ setFilteredReports(patientReports.filter(report => report.status != 'approved')) }} icon="close" value="pending">Pending</ToggleButton>
-        </ToggleButton.Row>
+        <View style={tw`flex-row mb-4`}>
+        <Button
+            style={[
+              tw`flex-1 p-0 h-10`,
+              statusFilter === 'approved' ? tw`bg-purple-600` : tw`bg-white`
+            ]}
+            mode="contained"
+            onPress={() => setStatusFilter('approved')}
+          >
+            <Text style={tw`text-center font-semibold ${statusFilter === 'approved' ? 'text-white' : 'text-black'}`}>
+              Approved
+            </Text>
+          </Button>
+          <Button
+            style={[
+              tw`flex-1 p-0 h-10`,
+              statusFilter === 'pending' ? tw`bg-purple-600` : tw`bg-white`
+            ]}
+            mode="contained"
+            onPress={() => setStatusFilter('pending')}
+          >
+            <Text style={tw`text-center font-semibold ${statusFilter === 'pending' ? 'text-white' : 'text-black'}`}>
+              Pending
+            </Text>
+          </Button>
+        </View>
 
-        <Text>Filter by status:</Text>
         <ScrollView
           style={styles.scrollView}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-            />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
+          {filteredReports.length < 1 && <Text>No reports available.</Text>}
 
-
-
-          {patientReports.length < 1 && <Text>No reports available.</Text>}
-
-          {filteredReports.map(report => (
+          {filteredReports.map((report) => (
             <Card key={report.id} style={styles.card}>
-              <Card.Title title={report.id} />
+              <Card.Title title={`Report ${report.id}`} />
               <Card.Content>
                 <View style={{ flexDirection: 'row' }}>
                   <Image source={{ uri: report.image }} style={{ width: 50, height: 50, marginRight: 10 }} />
@@ -123,38 +131,27 @@ const ListReport = ({ route, navigation }) => {
                 </View>
               </Card.Content>
               <Card.Actions style={styles.actions}>
-                <TouchableOpacity
-                  style={[styles.button, { backgroundColor: '#007BFF' }]}
-                  onPress={() => navigation.navigate('Segmentation', { reportId: report.id, imageUrl: report.image, patientId: patientId, reportId: report.id })}
-                >
-                  <Button textColor="#FFFFFF">Process Report</Button>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.button, { backgroundColor: '#1e211f' }]}
-                  onPress={() => handleViewDetails(report.title)}
-                >
-                  <Button textColor="#FFFFFF">View Details</Button>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[styles.button, { backgroundColor: 'green' }]}
-                  onPress={() => navigation.navigate('Chat', { reportId: report.id, patientId: patientId })}
-                >
-                  <Button textColor="#FFFFFF">Chat</Button>
-                </TouchableOpacity>
-
+              
+                  <Button mode='contained'
+                    onPress={() => navigation.navigate('Segmentation', { reportId: report.id, imageUrl: report.image, patientId: uid })}
+                  textColor="#FFFFFF">Process Report</Button>
+               
+                
+                  <Button   onPress={() => handleViewDetails(report.id)} textColor="#FFFFFF">View Details</Button>
+                
+                
+                  <Button
+                   onPress={() => navigation.navigate('Chat', { reportId: report.id, patientId: uid })}
+                  textColor="#FFFFFF">Chat</Button>
+                
               </Card.Actions>
             </Card>
           ))}
         </ScrollView>
       </View>
 
-      {/* Feedback Modal */}
       <FeedbackModal visible={feedbackModalVisible} onClose={() => setFeedbackModalVisible(false)} />
-
-      {/* View Details Modal */}
       <ViewDetailsModal visible={detailsModalVisible} onClose={() => setDetailsModalVisible(false)} />
-
     </>
   );
 };
@@ -163,23 +160,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#F8F9FA', // Light gray background
+    backgroundColor: '#F8F9FA',
   },
   scrollView: {
     flex: 1,
   },
   card: {
     marginBottom: 10,
-    // backgroundColor: '#FFFFFF', // White card background
     elevation: 4,
     borderRadius: 8,
-    // borderColor: 'lightblue',
-    // borderWidth: 1,
   },
   descriptionText: {
     fontSize: 16,
     marginBottom: 10,
-    color: '#495057', // Dark gray description text
+    color: '#495057',
   },
   statusText: {
     fontSize: 16,

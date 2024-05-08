@@ -1,12 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
 import tw from 'twrnc';
 import { auth } from '../Connection/DB';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { AntDesign } from '@expo/vector-icons';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import GeneralHeader from '../components/GeneralHeader';
+import { Button, TextInput } from 'react-native-paper';
 const Login = () => {
   const [isDermaLogin, setIsDermaLogin] = useState(true);
   const [email, setEmail] = useState('');
@@ -59,7 +61,7 @@ const Login = () => {
 
   return (
     <SafeAreaView style={tw`flex-1 `}>
-      <Text className='text-xl text-center font-bold py-2 bg-blue-600 w-full px-2 text-white'>Login</Text>
+      {/* <GeneralHeader title={'Login'} /> */}
       <ScrollView contentContainerStyle={tw`p-4 justify-center items-center flex-grow bg-white`}>
 
         <Image
@@ -70,22 +72,22 @@ const Login = () => {
 
         {/* Toggle Button */}
         <View style={tw`flex-row mb-4`}>
-          <TouchableOpacity
-            style={tw`flex-1 ${isDermaLogin ? 'bg-blue-600' : 'bg-white'} p-2 rounded-l-lg`}
+          <Button
+            style={tw`flex-1 ${isDermaLogin ? 'bg-purple-600' : 'bg-white'} p-0 h-10 `}
             onPress={() => setIsDermaLogin(true)}
           >
-            <Text style={tw`${isDermaLogin ? 'text-white' : 'text-blue-600'} text-center font-semibold`}>
+            <Text style={tw`${isDermaLogin ? 'text-white' : 'text-purple-600'} text-center font-semibold`}>
               Login as Derma
             </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={tw`flex-1 ${isDermaLogin ? 'bg-white' : 'bg-blue-600'} p-2 rounded-r-lg`}
+          </Button>
+          <Button
+             style={tw`flex-1 ${!isDermaLogin ? 'bg-purple-600' : 'bg-white'} p-0 h-10 `}
             onPress={() => setIsDermaLogin(false)}
           >
-            <Text style={tw`${isDermaLogin ? 'text-blue-600' : 'text-white'} text-center font-semibold`}>
+            <Text style={tw`${isDermaLogin ? 'text-purple-600' : 'text-white'} text-center font-semibold`}>
               Login as Patient
             </Text>
-          </TouchableOpacity>
+          </Button>
         </View>
 
         {/* ... rest of your login form */}
@@ -93,18 +95,21 @@ const Login = () => {
         {isDermaLogin && (
           <View style={{ width: '100%', marginBottom: 20 }}>
             <TextInput
+              
+              mode='outlined'
+              label={'MTN'}
               value={mtn}
               onChangeText={setMtn}
               placeholder="MTN"
               keyboardType="email-address"
               autoCapitalize="none"
-              style={tw`bg-white w-full pl-3 pr-10 py-3 rounded-lg border border-gray-300`}
+              style={tw`bg-white w-full `}
             />
             <AntDesign
               name={mtn === "derm123" || mtn === "DERM123" ? "checkcircle" : "closecircle"}
               size={24}
               color={mtn === "derm123" || mtn === "DERM123" ? "green" : "red"}
-              style={tw`absolute right-3 top-3`}  // Position the icon inside the TextInput
+              style={tw`absolute right-3 top-5`}  // Position the icon inside the TextInput
             />
           </View>
         )}
@@ -112,22 +117,25 @@ const Login = () => {
         {(mtn === "derm123" || mtn === "DERM123") && (isDermaLogin) && (
           <>
             <TextInput
-
+              mode='outlined'
+              label={'Email'}
               value={email}
               onChangeText={setEmail}
               placeholder="Email"
               keyboardType="email-address"
               autoCapitalize="none"
-              style={tw`bg-white w-full mb-4 p-3 rounded-lg border border-gray-300`}
+              style={tw`bg-white w-full mb-4  `}
             />
 
             <TextInput
+              mode='outlined'
+              label={'Password'}
               value={password}
               onChangeText={setPassword}
               placeholder="Password"
               secureTextEntry={true}
               autoCapitalize="none"
-              style={tw`bg-white w-full mb-4 p-3 rounded-lg border border-gray-300`}
+              style={tw`bg-white w-full mb-4  `}
             />
           </>
 
@@ -142,22 +150,25 @@ const Login = () => {
         {(!isDermaLogin) && (
           <>
             <TextInput
-
+            mode='outlined'
+              label={'Email'}
               value={email}
               onChangeText={setEmail}
               placeholder="Email"
               keyboardType="email-address"
               autoCapitalize="none"
-              style={tw`bg-white w-full mb-4 p-3 rounded-lg border border-gray-300`}
+              style={tw`bg-white w-full mb-4 `}
             />
 
             <TextInput
+              mode='outlined'
+              label={'Password'}
               value={password}
               onChangeText={setPassword}
               placeholder="Password"
               secureTextEntry={true}
               autoCapitalize="none"
-              style={tw`bg-white w-full mb-4 p-3 rounded-lg border border-gray-300`}
+              style={tw`bg-white w-full mb-4 `}
             />
           </>
 
@@ -174,15 +185,17 @@ const Login = () => {
           <Text style={tw`text-blue-600 mb-8 text-right`}>Forgot password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        <Button
+          icon={isDermaLogin ? 'doctor' : 'account'}
+          mode='contained'
           onPress={handleLogin}
-          style={tw`bg-blue-600 w-full p-3 rounded-lg`}
+          style={tw` w-full rounded-lg`}
         >
           <Text style={tw`text-white text-center text-lg font-semibold`}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => { navigation.navigate('Signup') }}>
+        </Button>
+        <Button onPress={() => { navigation.navigate('Signup') }} mode='text'>
           <Text style={tw`text-blue-600 mb-8 text-right py-4`}>Dont have account ? Signup</Text>
-        </TouchableOpacity>
+        </Button>
       </ScrollView>
     </SafeAreaView>
   );

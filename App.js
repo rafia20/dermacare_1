@@ -36,6 +36,7 @@ const App = () => {
         }}
       >
 
+        <Stack.Screen name="Onboarding" component={Onboarding} />
         <Stack.Screen name="ReportPosting" component={ReportPosting} />
         <Stack.Screen name='Home' component={Home} />
 
@@ -46,7 +47,6 @@ const App = () => {
         <Stack.Screen name="Visual Search" component={VisualSearch} />
 
         <Stack.Screen name="News" component={NewsScreen} />
-        <Stack.Screen name="Onboarding" component={Onboarding} />
         <Stack.Screen name="Derma" component={BottomNavDerma} />
         <Stack.Screen name='Segmentation' component={Segmentation} />
         <Stack.Screen name='Classify' component={Classification} />

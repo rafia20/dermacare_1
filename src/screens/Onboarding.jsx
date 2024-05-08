@@ -3,6 +3,7 @@ import React from 'react';
 import LottieView from 'lottie-react-native';
 import tw from 'twrnc'; // Ensure twrnc is correctly configured
 import { useNavigation } from '@react-navigation/native';
+import { Button } from 'react-native-paper';
 
 
 const Onboarding = () => {
@@ -15,7 +16,7 @@ const Onboarding = () => {
           source={require('../../assets/dermaAnime.json')}
           loop={false}
           autoPlay
-          style={tw`w-full h-full`}
+          style={tw`w-full h-full bg-purple-100`}
         />
       </View>
 
@@ -30,16 +31,19 @@ const Onboarding = () => {
       </View>
 
       {/* Touchable button with shadow for depth */}
-      <TouchableOpacity
-        style={tw`bg-blue-500 hover:bg-blue-700 mt-5 rounded-lg w-full py-3 shadow-lg`}
-        activeOpacity={0.8}
+      <Button
+        onPress={()=>{
+          navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+        }}
+        elevation={5}
+        mode='contained'
+        style={tw`w-full  `}
+        icon={'arrow-right-bold-circle'}
       >
-        <Text onPress={()=>{
-          navigation.navigate('Login')
-        }} style={tw`text-white text-center font-semibold text-lg`}>
+        <Text  style={tw`text-white text-center font-semibold text-lg`}>
           Get Started
         </Text>
-      </TouchableOpacity>
+      </Button>
     </View>
   );
 };

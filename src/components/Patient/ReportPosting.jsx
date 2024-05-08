@@ -9,15 +9,58 @@ import Loading from '../Loading';
 import { useNavigation } from '@react-navigation/native';
 import { Button, FAB, Modal, Portal, Provider } from 'react-native-paper';
 import GeneralHeader from '../GeneralHeader';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 
 
 const ReportPosting = () => {
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
+    const [base64, setBase64] = useState(null);
     const [uid, setUid] = useState(''); // Add this line
     const [loading, setLoading] = useState(false);
+    const [isSkin, setIsSkin] = useState(true);
     const navigation = useNavigation();
+    
+    const generative = new GoogleGenerativeAI("AIzaSyAmf5o7tzb0Nq9K9eS3m2HXX7nSrBZokwg");
+    const model = generative.getGenerativeModel({ model: "gemini-pro-vision" });
+
+    const geminiContent = async () => {
+        try {
+            setLoading(true);
+            const prompt = "Please detect any human skin in the image, if the image is of human skin the response should be true, else the response should be false.";
+            const image = {
+                inlineData:{
+                    data: base64,
+                    mimeType: 'image/jpeg'
+                }
+            }
+            const response = await model.generateContent([prompt, image]);
+            const result = await response.response.text();
+            if (result.includes("false")){
+                alert("Please upload an image of human skin");
+                setIsSkin(false);
+                return;
+            }
+            else {
+                setIsSkin(true);
+                await handleSendData();
+            }
+
+
+            console.log(result);
+            return result;
+        } catch (error) {
+            console.error('Failed to fetch or generate response:', error);
+            await handleSendData();
+            return null;
+        } finally {
+            setLoading(false);
+        }
+
+        
+    };
+
     useEffect(() => {
         auth.onAuthStateChanged((user) => {
             console.log(user)
@@ -32,6 +75,7 @@ const ReportPosting = () => {
 
     const [modalVisible, setModalVisible] = useState(false);
     const handleCaptureImage = async () => {
+        
         const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
         console.log('Camera permission:', permissionResult);
 
@@ -44,12 +88,15 @@ const ReportPosting = () => {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             quality: 1,
+            base64: true,
         });
 
-        console.log('Image picker result:', pickerResult.assets[0].uri);
-        setImage(pickerResult.assets[0].uri);
+        
         if (!pickerResult.canceled) {
-            setSelectedImage(pickerResult.assets[0].uri);
+            // console.log(pickerResult.assets[0]);
+            setBase64(pickerResult.assets[0].base64);
+            console.log('Image picker result:', pickerResult.assets[0].uri);
+            setImage(pickerResult.assets[0].uri);
             setModalVisible(false); // Close the modal after capturing an image
         }
     };
@@ -67,17 +114,21 @@ const ReportPosting = () => {
             allowsEditing: true,
             "mediaTypes": "Images",
             "presentationStyle": "overFullScreen",
-
+            base64: true,
+            
             quality: 1,
+            
         });
 
         if (!result.canceled) {
+            setBase64(result.assets[0].base64);
             result.assets[0].mimeType = "image/jpeg";
             setImage(result.assets[0].uri);
         }
     };
 
     async function handleSendData() {
+
         console.log(uid);
         if (uid && image) {
             const curren = Date.now();
@@ -85,7 +136,7 @@ const ReportPosting = () => {
             const imageStorageRef = storageRef(storage, path);
             console.log(imageStorageRef);
             try {
-                setLoading(true)
+                
                 const response = await fetch(image);
 
 
@@ -166,7 +217,7 @@ const ReportPosting = () => {
             )}
 
           
-            <Button icon={'send'} mode='contained'  onPress={handleSendData}>
+            <Button icon={'send'} mode='contained'  onPress={geminiContent}>
                 Submit Report
             </Button>
             </Provider>

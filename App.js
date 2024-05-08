@@ -36,13 +36,15 @@ const App = () => {
         }}
       >
 
-<Stack.Screen name='Home' component={Home} />
+        <Stack.Screen name="ReportPosting" component={ReportPosting} />
+        <Stack.Screen name='Home' component={Home} />
+
         <Stack.Screen name="listreport" component={ListReport} />
         <Stack.Screen name="AllReports" component={ReportList} />
         <Stack.Screen name="Ask Questions" component={AskQuestions} />
         <Stack.Screen name="Disease Information" component={DiseaseInformationScreen} />
         <Stack.Screen name="Visual Search" component={VisualSearch} />
-        <Stack.Screen name="ReportPosting" component={ReportPosting} />
+
         <Stack.Screen name="News" component={NewsScreen} />
         <Stack.Screen name="Onboarding" component={Onboarding} />
         <Stack.Screen name="Derma" component={BottomNavDerma} />
@@ -51,7 +53,7 @@ const App = () => {
         <Stack.Screen name="Feedback" component={Feedback} />
         {/* <Stack.Screen name="Patient" component={PatientBottomMenu} /> */}
         <Stack.Screen name='Chat with AI' component={RAGChat} />
-        
+
         <Stack.Screen name='Chat' component={Chat} />
 
 

@@ -51,7 +51,7 @@ const App = () => {
         <Stack.Screen name='Segmentation' component={Segmentation} />
         <Stack.Screen name='Classify' component={Classification} />
         <Stack.Screen name="Feedback" component={Feedback} />
-        {/* <Stack.Screen name="Patient" component={PatientBottomMenu} /> */}
+        <Stack.Screen name="Patient" component={PatientBottomMenu} />
         <Stack.Screen name='Chat with AI' component={RAGChat} />
 
         <Stack.Screen name='Chat' component={Chat} />

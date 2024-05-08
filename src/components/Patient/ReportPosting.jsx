@@ -180,7 +180,7 @@ const ReportPosting = () => {
 
     return (
         <>
-        <GeneralHeader title="Report Posting" />
+        {/* <GeneralHeader title="Report Posting" /> */}
         <View style={styles.container}>
             
             <Provider>

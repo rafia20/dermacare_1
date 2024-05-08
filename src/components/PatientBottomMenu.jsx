@@ -40,7 +40,8 @@ const PatientBottomMenu = () => {
     >
       <Tab.Screen options={{ headerShown: false }} name="Home" component={ReportPosting} />
       <Tab.Screen options={{ headerShown: false }} name="AllReports" component={ReportList} />
-      <Tab.Screen options={{ headerShown: false }} name="Bookings" component={Booking} />
+      {/* <Tab.Screen options={{ headerShown: false }} name="Bookings" component={Booking} /> */}
+      <Tab.Screen options={{ headerShown: false }} name="Maps" component={Maps} />
       <Tab.Screen options={{ headerShown: false }} name="Settings" component={Settings} />
     </Tab.Navigator>
     </>

@@ -86,7 +86,7 @@ const ReportList = () => {
         if (uid) {
             loadReports(); // Load reports when UID is set or changed
         }
-    }, [uid]); // Dependency array includes uid to reload reports when uid changes
+    }, []); // Dependency array includes uid to reload reports when uid changes
 
     const loadReports = () => {
         if (!uid) return; // If no UID, exit the function
@@ -117,7 +117,7 @@ const ReportList = () => {
 
     return (
         <>
-            <GeneralHeader title="Reports" />
+            {/* <GeneralHeader title="Reports" /> */}
             <ScrollView
                 style={{ flex: 1 }}
                 refreshControl={
